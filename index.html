@@ -576,6 +576,81 @@ ${m} + ${d} = ${mdRaw} → ${mdRes}
       <div class="pre">${details}</div>
     `);
   });
+  function daysInMonth(y, m) {
+  return new Date(y, m, 0).getDate(); // mは1-12
+}
+
+function metricsFor(y, m, d) {
+  // ① 生年月日を全部足す
+  const allDigits = `${y}${String(m).padStart(2,"0")}${String(d).padStart(2,"0")}`;
+  const allRaw = allDigits.split("").reduce((a, n) => a + Number(n), 0);
+  const allRes = reduceNumber(allRaw);
+
+  // ② 日にちだけ足す（11日・22日はそのまま）
+  let dayRaw, dayRes;
+  if (d === 11 || d === 22) {
+    dayRaw = d;
+    dayRes = d;
+  } else {
+    dayRaw = digitSumOfNumber(d);
+    dayRes = reduceNumber(dayRaw);
+  }
+
+  // ③ 月と日を足す
+  const mdRaw = m + d;
+  const mdRes = reduceNumber(mdRaw);
+
+  return { allRes, dayRes, mdRes };
+}
+
+document.getElementById("findBtn").addEventListener("click", () => {
+  const y = Number(document.getElementById("yearInput").value);
+  const m = Number(monthSel.value);
+  const d = Number(daySel.value);
+
+  const matchesEl = document.getElementById("matches");
+
+  if (!Number.isFinite(y) || y < 1900 || y > 2100) {
+    matchesEl.style.display = "block";
+    matchesEl.textContent = "先に『年・月・日』を正しく入力してから探してください。";
+    return;
+  }
+
+  // ターゲット（いま選んでいる生年月日と同じ結果のものを探す）
+  const target = metricsFor(y, m, d);
+
+  const fromYear = 1950;
+  const toYear = 2100;
+  const maxShow = 50; // 表示件数（多すぎ防止）
+
+  const found = [];
+
+  for (let yy = fromYear; yy <= toYear; yy++) {
+    for (let mm = 1; mm <= 12; mm++) {
+      const last = daysInMonth(yy, mm);
+      for (let dd = 1; dd <= last; dd++) {
+        const met = metricsFor(yy, mm, dd);
+        if (
+          met.allRes === target.allRes &&
+          met.dayRes === target.dayRes &&
+          met.mdRes === target.mdRes
+        ) {
+          found.push(`${yy}-${String(mm).padStart(2,"0")}-${String(dd).padStart(2,"0")}`);
+          if (found.length >= maxShow) break;
+        }
+      }
+      if (found.length >= maxShow) break;
+    }
+    if (found.length >= maxShow) break;
+  }
+
+  matchesEl.style.display = "block";
+  matchesEl.textContent =
+`同じ結果（①=${target.allRes}, ②=${target.dayRes}, ③=${target.mdRes}）の誕生日（最初の${Math.min(found.length, maxShow)}件）:
+${found.join("\n")}
+${found.length >= maxShow ? "\n…（多いので一部のみ表示）" : ""}`;
+});
+
 </script>
 
 </body>
@@ -608,6 +683,7 @@ ${m} + ${d} = ${mdRaw} → ${mdRes}
   </script>
 </body>
 </html>
+
 
 
 
