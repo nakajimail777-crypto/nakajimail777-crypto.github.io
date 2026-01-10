@@ -406,9 +406,18 @@
     const allRaw = allDigits.split("").reduce((a, d) => a + Number(d), 0);
     const allResult = reduceNumber(allRaw);
 
-    // ② 日にちだけ足す
-    const dayRaw = String(day).split("").reduce((a, d) => a + Number(d), 0);
-    const dayResult = reduceNumber(dayRaw);
+
+    // ② 日にちだけ足す（11日・22日はそのまま）
+    let dayRaw;
+    let dayResult;
+
+    if (day === 11 || day === 22) {
+      dayRaw = day;
+      dayResult = day; // 足さない
+    } else {
+      dayRaw = String(day).split("").reduce((a, d) => a + Number(d), 0);
+      dayResult = reduceNumber(dayRaw);
+    }
 
     // ③ 月と日を足す
     const monthDayRaw = month + day;
@@ -453,6 +462,7 @@
   </script>
 </body>
 </html>
+
 
 
 
