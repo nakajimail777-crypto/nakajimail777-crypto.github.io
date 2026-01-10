@@ -440,22 +440,18 @@
 /* ===== 初期化 ===== */
 
 // 年
-const yearSel = document.getElementById("year");
-const nowYear = new Date().getFullYear();
+<div class="row">
+  <input id="year"
+         type="number"
+         placeholder="年（例：1985）"
+         style="flex:1; padding:10px; font-size:16px; border-radius:12px;
+                border:1px solid rgba(148,163,184,.5);
+                background:rgba(15,23,42,.9); color:#e5e7eb;">
 
-// いったん空にする（保険）
-yearSel.innerHTML = "";
+  <select id="month"></select>
+  <select id="day"></select>
+</div>
 
-// 年を追加
-for (let y = nowYear; y >= 1950; y--) {
-  const opt = document.createElement("option");
-  opt.value = y;
-  opt.textContent = y + "年";
-  yearSel.appendChild(opt);
-}
-
-// ★ 最初から現在年を選択状態にする
-yearSel.value = nowYear;
 
 
 // 月
@@ -499,15 +495,16 @@ const meaning = {
 };
 
 document.getElementById("calc").addEventListener("click", () => {
-  const y = Number(yearSel.value);
-  const m = Number(monthSel.value);
-  const d = Number(daySel.value);
-  const out = document.getElementById("out");
 
-  if (!y || !m || !d) {
-    out.textContent = "年月日を選んでください";
-    return;
-  }
+const y = Number(document.getElementById("year").value);
+const m = Number(document.getElementById("month").value);
+const d = Number(document.getElementById("day").value);
+
+if (!y || y < 1900 || y > 2100 || !m || !d) {
+  out.textContent = "正しい年・月・日を入力してください";
+  return;
+}
+
 
   // ① 生年月日を全部足す
   const allDigits = `${y}${String(m).padStart(2,"0")}${String(d).padStart(2,"0")}`;
@@ -572,6 +569,7 @@ document.getElementById("calc").addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 
