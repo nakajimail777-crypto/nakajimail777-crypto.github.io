@@ -362,6 +362,130 @@
       </div>
     </section>
 
+<!-- 数秘術ミニ計算 -->
+<section id="numerology">
+  <h2>数秘術ミニ計算</h2>
+  <p class="section-text">
+    生年月日からライフパス数と「今日の流れ」を計算します。<br>
+    実験的に公開中。
+  </p>
+
+  <!-- ▼ ここに数秘ツール本体を貼る ▼ -->
+  <!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>数秘術ミニ計算</title>
+  <style>
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans JP", sans-serif; margin: 24px; line-height: 1.6; }
+    .card { max-width: 720px; border: 1px solid #ddd; border-radius: 16px; padding: 16px; box-shadow: 0 2px 10px rgba(0,0,0,.04); }
+    label { display:block; margin-top: 12px; font-weight: 600; }
+    input { width: 100%; padding: 10px 12px; font-size: 16px; margin-top: 6px; border: 1px solid #ccc; border-radius: 10px; }
+    button { margin-top: 14px; padding: 10px 14px; font-size: 16px; border: 0; border-radius: 10px; cursor: pointer; }
+    .row { display:flex; gap: 12px; flex-wrap: wrap; }
+    .pill { display:inline-block; padding: 6px 10px; border-radius: 999px; background: #f3f3f3; margin: 6px 8px 0 0; }
+    pre { background:#fafafa; border:1px solid #eee; padding:12px; border-radius:12px; overflow:auto; }
+    .muted { color:#666; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 style="margin:0 0 6px;">数秘術ミニ計算</h1>
+    <div class="muted">ライフパス数（基本数）＋ 今日の流れ数（誕生日の日＋今日の日）</div>
+
+    <label>生年月日</label>
+    <input id="birth" type="date" />
+
+    <label>「今日」(任意：未入力なら端末の今日を使用)</label>
+    <input id="today" type="date" />
+
+    <button id="calc">計算する</button>
+
+    <div id="out" style="margin-top:16px;"></div>
+  </div>
+
+  <script>
+    // 1桁になるまで縮約（今回は 11/22/33 のマスターナンバー扱い無し）
+    function reduceToOneDigit(n) {
+      while (n > 9) {
+        n = String(n).split("").reduce((a, d) => a + Number(d), 0);
+      }
+      return n;
+    }
+
+    // YYYY-MM-DD → {y,m,d}
+    function parseDate(value) {
+      if (!value) return null;
+      const [y, m, d] = value.split("-").map(Number);
+      if (!y || !m || !d) return null;
+      return { y, m, d };
+    }
+
+    function lifePathNumber(y, m, d) {
+      const digits = `${y}${String(m).padStart(2,"0")}${String(d).padStart(2,"0")}`;
+      const raw = digits.split("").reduce((a, x) => a + Number(x), 0);
+      return { number: reduceToOneDigit(raw), raw, digits };
+    }
+
+    function flowNumber(birthDay, todayDay) {
+      const raw = birthDay + todayDay;
+      return { number: reduceToOneDigit(raw), raw };
+    }
+
+    function formatResult(html) {
+      document.getElementById("out").innerHTML = html;
+    }
+
+    // 初期値：生年月日を例で埋めたい場合はここを変更（消してもOK）
+    // document.getElementById("birth").value = "1985-05-26";
+
+    // 今日を自動セット（today入力が空でも計算できるように）
+    function getLocalTodayISO() {
+      const t = new Date();
+      const yyyy = t.getFullYear();
+      const mm = String(t.getMonth() + 1).padStart(2, "0");
+      const dd = String(t.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    document.getElementById("calc").addEventListener("click", () => {
+      const b = parseDate(document.getElementById("birth").value);
+      if (!b) {
+        formatResult(`<div style="color:#b00;">生年月日を入力してください。</div>`);
+        return;
+      }
+
+      const todayVal = document.getElementById("today").value || getLocalTodayISO();
+      const t = parseDate(todayVal);
+      if (!t) {
+        formatResult(`<div style="color:#b00;">「今日」の日付が正しくありません。</div>`);
+        return;
+      }
+
+      const life = lifePathNumber(b.y, b.m, b.d);
+      const flow = flowNumber(b.d, t.d);
+
+      const stepsLife = `${life.digits} の各桁を足す → ${life.raw} → ${life.number}`;
+      const stepsFlow = `誕生日の日(${b.d}) + 今日の日(${t.d}) = ${flow.raw} → ${flow.number}`;
+
+      formatResult(`
+        <div class="row">
+          <div class="pill">ライフパス数：<b>${life.number}</b></div>
+          <div class="pill">今日の流れ数：<b>${flow.number}</b></div>
+        </div>
+        <h3 style="margin:14px 0 6px;">計算過程</h3>
+        <pre>◆ ライフパス数\n${stepsLife}\n\n◆ 今日の流れ数\n${stepsFlow}\n\n（今日として使用：${todayVal}）</pre>
+      `);
+    });
+  </script>
+</body>
+</html>
+
+  <!-- （前に渡した <div class="card"> ～ </script> まで） -->
+</section>
+
+    
     <!-- お問い合わせ的な欄（仮） -->
     <section id="contact">
       <h2>お問い合わせ / メモ</h2>
@@ -388,6 +512,7 @@
   </script>
 </body>
 </html>
+
 
 
 
