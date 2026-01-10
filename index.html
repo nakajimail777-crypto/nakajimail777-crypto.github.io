@@ -361,15 +361,8 @@
         </div>
       </div>
     </section>
-<!-- 数秘術ミニ計算 -->
-<section id="numerology">
-  <h2>数秘術ミニ計算</h2>
-  <p class="section-text">
-    生年月日からライフパス数と「今日の流れ」を計算します。<br>
-    実験的に公開中。
-  </p>
 <section id="simple-numerology" style="margin-top:32px;">
-  <h2>数秘・基本3パターン計算</h2>
+  <h2>数秘・基本3パターン計算（11/22/33対応）</h2>
 
   <label style="display:block; margin-top:10px;">生年月日</label>
   <input id="birth" type="date"
@@ -384,9 +377,14 @@
 </section>
 
 <script>
-  // 1桁になるまで足す
-  function reduceToOneDigit(n) {
+  // 11 / 22 / 33 を保持して縮約する
+  function reduceNumber(n) {
+    const masters = [11, 22, 33];
+
     while (n > 9) {
+      if (masters.includes(n)) {
+        return n; // マスターナンバーはここで止める
+      }
       n = String(n).split("").reduce((a, d) => a + Number(d), 0);
     }
     return n;
@@ -394,8 +392,10 @@
 
   document.getElementById("calc").addEventListener("click", () => {
     const birth = document.getElementById("birth").value;
+    const out = document.getElementById("out");
+
     if (!birth) {
-      document.getElementById("out").innerHTML = "生年月日を入力してください";
+      out.innerHTML = "生年月日を入力してください";
       return;
     }
 
@@ -403,27 +403,28 @@
 
     // ① 生年月日を全部足す
     const allDigits = `${year}${String(month).padStart(2,"0")}${String(day).padStart(2,"0")}`;
-    const allSumRaw = allDigits.split("").reduce((a, d) => a + Number(d), 0);
-    const allResult = reduceToOneDigit(allSumRaw);
+    const allRaw = allDigits.split("").reduce((a, d) => a + Number(d), 0);
+    const allResult = reduceNumber(allRaw);
 
     // ② 日にちだけ足す
     const dayRaw = String(day).split("").reduce((a, d) => a + Number(d), 0);
-    const dayResult = reduceToOneDigit(dayRaw);
+    const dayResult = reduceNumber(dayRaw);
 
     // ③ 月と日を足す
     const monthDayRaw = month + day;
-    const monthDayResult = reduceToOneDigit(monthDayRaw);
+    const monthDayResult = reduceNumber(monthDayRaw);
 
-    document.getElementById("out").innerHTML = `
-      <div>① 生年月日を全部足す：<b>${allResult}</b>（途中：${allSumRaw}）</div>
+    out.innerHTML = `
+      <div>① 生年月日を全部足す：<b>${allResult}</b>（途中：${allRaw}）</div>
       <div>② 日にちだけ足す：<b>${dayResult}</b>（途中：${dayRaw}）</div>
       <div>③ 月と日を足す：<b>${monthDayResult}</b>（途中：${monthDayRaw}）</div>
+      <div style="margin-top:8px; font-size:0.9em; opacity:0.8;">
+        ※ 11 / 22 / 33 はマスターナンバーとして保持しています
+      </div>
     `;
   });
 </script>
 
-
-</section>
 
 
     <!-- お問い合わせ的な欄（仮） -->
@@ -452,6 +453,7 @@
   </script>
 </body>
 </html>
+
 
 
 
