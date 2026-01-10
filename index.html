@@ -443,11 +443,19 @@
 const yearSel = document.getElementById("year");
 const nowYear = new Date().getFullYear();
 
-yearSel.add(new Option("年", ""));
+// いったん空にする（保険）
+yearSel.innerHTML = "";
+
+// 年を追加
 for (let y = nowYear; y >= 1950; y--) {
-  yearSel.add(new Option(y + "年", y));
+  const opt = document.createElement("option");
+  opt.value = y;
+  opt.textContent = y + "年";
+  yearSel.appendChild(opt);
 }
-yearSel.value = nowYear; // ← これが重要
+
+// ★ 最初から現在年を選択状態にする
+yearSel.value = nowYear;
 
 
 // 月
@@ -564,6 +572,7 @@ document.getElementById("calc").addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 
