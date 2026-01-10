@@ -404,6 +404,161 @@
 
     <div id="out" style="margin-top:12px;"></div>
   </div>
+  <script>
+  // DOMができてから動かす（順番問題を全部回避）
+  window.addEventListener("DOMContentLoaded", () => {
+    // 年号を自動で更新
+    const yearEl = document.getElementById("year");
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    // ===== 数秘ツール =====
+    function reduceNumber(n, keepMaster = true) {
+      const masters = new Set([11, 22, 33]);
+      while (n > 9) {
+        if (keepMaster && masters.has(n)) return n;
+        n = String(n).split("").reduce((a, d) => a + Number(d), 0);
+      }
+      return n;
+    }
+
+    function parseDate(value) {
+      if (!value) return null;
+      const [y, m, d] = value.split("-").map(Number);
+      if (!y || !m || !d) return null;
+      return { y, m, d };
+    }
+
+    function getLocalTodayISO() {
+      const t = new Date();
+      const yyyy = t.getFullYear();
+      const mm = String(t.getMonth() + 1).padStart(2, "0");
+      const dd = String(t.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function lifePathNumber(y, m, d, keepMaster) {
+      const digits = `${y}${String(m).padStart(2,"0")}${String(d).padStart(2,"0")}`;
+      const raw = digits.split("").reduce((a, x) => a + Number(x), 0);
+      return { number: reduceNumber(raw, keepMaster), raw, digits };
+    }
+
+    function simpleFlowNumber(birthDay, todayDay, keepMaster) {
+      const raw = birthDay + todayDay;
+      return { number: reduceNumber(raw, keepMaster), raw };
+    }
+
+    function personalYearNumber(birthMonth, birthDay, currentYear, keepMaster) {
+      const yearSum = String(currentYear).split("").reduce((a, d) => a + Number(d), 0);
+      const raw = birthMonth + birthDay + yearSum;
+      return { number: reduceNumber(raw, keepMaster), raw, yearSum };
+    }
+
+    function personalMonthNumber(personalYear, currentMonth, keepMaster) {
+      const raw = personalYear + currentMonth;
+      return { number: reduceNumber(raw, keepMaster), raw };
+    }
+
+    function personalDayNumber(personalMonth, currentDay, keepMaster) {
+      const raw = personalMonth + currentDay;
+      return { number: reduceNumber(raw, keepMaster), raw };
+    }
+
+    function getFlowMode() {
+      const selected = document.querySelector('input[name="flowMode"]:checked');
+      return selected ? selected.value : "simple";
+    }
+
+    const out = document.getElementById("out");
+    const btn = document.getElementById("calc");
+
+    function renderOut(html) {
+      if (out) out.innerHTML = html;
+    }
+
+    if (btn) {
+      btn.addEventListener("click", () => {
+        const b = parseDate(document.getElementById("birth")?.value);
+        if (!b) {
+          renderOut(`<div style="color:#fca5a5;">生年月日を入力してください。</div>`);
+          return;
+        }
+
+        const todayVal = document.getElementById("today")?.value || getLocalTodayISO();
+        const t = parseDate(todayVal);
+        if (!t) {
+          renderOut(`<div style="color:#fca5a5;">「今日」の日付が正しくありません。</div>`);
+          return;
+        }
+
+        const keepMaster = !!document.getElementById("keepMaster")?.checked;
+        const mode = getFlowMode();
+
+        const life = lifePathNumber(b.y, b.m, b.d, keepMaster);
+
+        let flowLabel = "";
+        let flowNum = null;
+        let details = "";
+
+        if (mode === "simple") {
+          const flow = simpleFlowNumber(b.d, t.d, keepMaster);
+          flowLabel = "今日の流れ（簡易）";
+          flowNum = flow.number;
+
+          details =
+`◆ ライフパス数
+${life.digits} → ${life.raw} → ${life.number}
+
+◆ 今日の流れ（簡易）
+誕生日の日(${b.d}) + 今日の日(${t.d}) = ${flow.raw} → ${flow.number}
+
+（今日として使用：${todayVal}）`;
+        } else {
+          const py = personalYearNumber(b.m, b.d, t.y, keepMaster);
+          const pm = personalMonthNumber(py.number, t.m, keepMaster);
+          const pd = personalDayNumber(pm.number, t.d, keepMaster);
+
+          flowLabel = "個人日（標準）";
+          flowNum = pd.number;
+
+          details =
+`◆ ライフパス数
+${life.digits} → ${life.raw} → ${life.number}
+
+◆ 個人年（標準）
+誕生月(${b.m}) + 誕生日(${b.d}) + 今年(${t.y}の各桁合計=${py.yearSum}) = ${py.raw} → ${py.number}
+
+◆ 個人月（標準）
+個人年(${py.number}) + 今月(${t.m}) = ${pm.raw} → ${pm.number}
+
+◆ 個人日（標準）
+個人月(${pm.number}) + 今日の日(${t.d}) = ${pd.raw} → ${pd.number}
+
+（今日として使用：${todayVal}）
+--- 
+まとめ：個人年=${py.number} / 個人月=${pm.number} / 個人日=${pd.number}`;
+        }
+
+        renderOut(`
+          <div style="margin-top:10px;">
+            <span style="display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(148,163,184,.16); border:1px solid rgba(148,163,184,.35); margin:6px 8px 0 0;">
+              ライフパス：<b>${life.number}</b>
+            </span>
+            <span style="display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(148,163,184,.16); border:1px solid rgba(148,163,184,.35); margin:6px 8px 0 0;">
+              ${flowLabel}：<b>${flowNum}</b>
+            </span>
+            <span style="display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(148,163,184,.16); border:1px solid rgba(148,163,184,.35); margin:6px 8px 0 0;">
+              Master：<b>${keepMaster ? "ON" : "OFF"}</b>
+            </span>
+          </div>
+          <div style="margin-top:10px; padding:12px; border-radius:14px; border:1px solid rgba(148,163,184,.25); background:rgba(2,6,23,.35); white-space:pre-wrap; word-break:break-word; color:#cbd5f5; font-size:.85rem;">
+${details}
+          </div>
+        `);
+      });
+    }
+  });
+</script>
+
 </section>
 
 
@@ -433,6 +588,7 @@
   </script>
 </body>
 </html>
+
 
 
 
