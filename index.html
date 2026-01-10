@@ -442,9 +442,13 @@
 // 年
 const yearSel = document.getElementById("year");
 const nowYear = new Date().getFullYear();
+
+yearSel.add(new Option("年", ""));
 for (let y = nowYear; y >= 1950; y--) {
   yearSel.add(new Option(y + "年", y));
 }
+yearSel.value = nowYear; // ← これが重要
+
 
 // 月
 const monthSel = document.getElementById("month");
@@ -560,6 +564,7 @@ document.getElementById("calc").addEventListener("click", () => {
   </script>
 </body>
 </html>
+
 
 
 
