@@ -652,7 +652,92 @@ ${found.length >= maxShow ? "\n…（多いので一部のみ表示）" : ""}`;
 });
 
 </script>
+<!-- ▼ 右上の縦三点メニュー ▼ -->
+<button class="menu-btn" id="menuBtn" aria-label="メニュー">
+  <span class="dot"></span>
+  <span class="dot"></span>
+  <span class="dot"></span>
+</button>
 
+<div class="menu" id="menuList">
+  <a href="#">ホーム</a>
+  <a href="#">プロフィール</a>
+  <a href="#">設定</a>
+</div>
+
+<style>
+  :root {
+    --dot-size: 5px;
+    --dot-gap: 6px;
+    --dot-color: #222;
+    --btn-size: 40px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --dot-color: #f2f2f2; }
+  }
+  .menu-btn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    width: var(--btn-size);
+    height: var(--btn-size);
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--dot-gap);
+    cursor: pointer;
+    border-radius: 10px;
+    z-index: 1000;
+  }
+  .dot {
+    width: var(--dot-size);
+    height: var(--dot-size);
+    background-color: var(--dot-color);
+    border-radius: 50%;
+  }
+  .menu {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(6px);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 0;
+    display: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    min-width: 140px;
+    z-index: 999;
+  }
+  .menu a {
+    display: block;
+    padding: 8px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .menu a:hover {
+    background: rgba(0,0,0,0.05);
+  }
+  .menu.show { display: block; }
+</style>
+
+<script>
+  const btn = document.getElementById('menuBtn');
+  const menu = document.getElementById('menuList');
+  btn.addEventListener('click', () => {
+    menu.classList.toggle('show');
+  });
+  document.addEventListener('click', (e) => {
+    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+      menu.classList.remove('show');
+    }
+  });
+</script>
+<!-- ▲ 縦三点メニューここまで ▲ -->
 </body>
 </html>
 
@@ -683,6 +768,7 @@ ${found.length >= maxShow ? "\n…（多いので一部のみ表示）" : ""}`;
   </script>
 </body>
 </html>
+
 
 
 
