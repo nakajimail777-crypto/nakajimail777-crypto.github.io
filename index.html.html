@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>マイサイト | 中島勲のホームページ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      background: #0f172a;
+      color: #e5e7eb;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(12px);
+      background: rgba(15, 23, 42, 0.85);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .nav {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-title {
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      font-size: 0.9rem;
+    }
+
+    .nav-links a {
+      padding: 4px 8px;
+      border-radius: 9999px;
+      transition: background 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      background: rgba(148, 163, 184, 0.2);
+    }
+
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 24px;
+      align-items: center;
+      padding: 24px;
+      margin-top: 16px;
+      border-radius: 24px;
+      background: radial-gradient(circle at top left, #1d4ed8, #0f172a);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.7);
+    }
+
+    .hero-title {
+      font-size: clamp(1.8rem, 3vw + 1rem, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .hero-sub {
+      font-size: 0.95rem;
+      color: #e5e7eb;
+      opacity: 0.9;
+      margin-bottom: 16px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn-primary {
+      background: #facc15;
+      color: #1f2933;
+      box-shadow: 0 10px 25px rgba(250, 204, 21, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 35px rgba(250, 204, 21, 0.5);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: rgba(148, 163, 184, 0.7);
+      color: #e5e7eb;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(15, 23, 42, 0.8);
+    }
+
+    .hero-tagline {
+      font-size: 0.8rem;
+      color: #bfdbfe;
+      opacity: 0.85;
+    }
+
+    .hero-card {
+      border-radius: 20px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 16px;
+      font-size: 0.9rem;
+    }
+
+    .hero-card-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #e5e7eb;
+    }
+
+    .hero-card-list {
+      list-style: none;
+    }
+
+    .hero-card-list li {
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #cbd5f5;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: rgba(37, 99, 235, 0.2);
+      font-size: 0.7rem;
+      margin-left: 4px;
+    }
+
+    section {
+      margin-top: 32px;
+      padding: 24px 20px;
+      border-radius: 20px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    section h2 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      border-left: 4px solid #facc15;
+      padding-left: 8px;
+    }
+
+    .section-text {
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      opacity: 0.9;
+    }
+
+    .service-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .service-card {
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.95);
+      font-size: 0.85rem;
+    }
+
+    .service-card-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .audio-group {
+      margin-top: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .audio-group audio {
+      width: 100%;
+    }
+
+    .download-link {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 9999px;
+      background: rgba(37, 99, 235, 0.2);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+    }
+
+    .calc-card {
+      max-width: 820px;
+      margin: 0 auto;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      border-radius: 18px;
+      padding: 16px;
+      background: rgba(15, 23, 42, 0.85);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+    }
+
+    .calc-title {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .muted {
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+      align-items: center;
+    }
+
+    .field {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      opacity: 0.95;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(2, 6, 23, 0.45);
+      color: #e5e7eb;
+    }
+
+    .calc-btn {
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(37, 99, 235, 0.22);
+      color: #e5e7eb;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .calc-btn:hover {
+      background: rgba(37, 99, 235, 0.28);
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.14);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      margin: 6px 8px 0 0;
+    }
+
+    .out {
+      margin-top: 14px;
+    }
+
+    .pre {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(2, 6, 23, 0.35);
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 0.9rem;
+      color: #cbd5f5;
+    }
+
+    .warn {
+      color: #fca5a5;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+
+    :root {
+      --dot-size: 5px;
+      --dot-gap: 6px;
+      --dot-color: #f2f2f2;
+      --btn-size: 40px;
+    }
+
+    .menu-btn {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: var(--btn-size);
+      height: var(--btn-size);
+      background: transparent;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: var(--dot-gap);
+      cursor: pointer;
+      border-radius: 10px;
+      z-index: 1000;
+    }
+
+    .dot {
+      width: var(--dot-size);
+      height: var(--dot-size);
+      background-color: var(--dot-color);
+      border-radius: 50%;
+    }
+
+    .menu {
+      position: fixed;
+      top: 60px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 8px 0;
+      display: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      min-width: 140px;
+      z-index: 999;
+    }
+
+    .menu a {
+      display: block;
+      padding: 8px 16px;
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .menu a:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+
+    .menu.show {
+      display: block;
+    }
+
+    footer {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+      text-align: center;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 720px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      main {
+        padding: 16px 12px 32px;
+      }
+
+      section {
+        padding: 20px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="menu-btn" id="menuBtn" aria-label="メニュー">
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </button>
+
+  <div class="menu" id="menuList">
+    <a href="#">ホーム</a>
+    <a href="#about">プロフィール</a>
+    <a href="index2.html">設定</a>
+  </div>
+
+  <header>
+    <div class="nav">
+      <div class="nav-title">My Web</div>
+      <nav class="nav-links">
+        <a href="#about">プロフィール</a>
+        <a href="#services">サービス</a>
+        <a href="#numerology">数秘計算</a>
+        <a href="#contact">お問い合わせ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <h1 class="hero-title">こんにちは、中島勲の小さなWebサイトです。</h1>
+        <p class="hero-sub">
+          ここに一言メッセージを書きましょう。<br />
+          ｢家電修理とクリエイティブを楽しむ中年の実験場です。」
+        </p>
+        <div class="hero-buttons">
+          <a href="#services" class="btn-primary">できることを見る</a>
+          <a href="#contact" class="btn-secondary">連絡してみる</a>
+        </div>
+        <p class="hero-tagline">
+          ※ このサイトは AI と対話しながら作られました。少しずつ育てていきます。
+        </p>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-title">
+          今の活動メモ <span class="badge">β版</span>
+        </div>
+        <ul class="hero-card-list">
+          <li>・家電修理の仕事をしつつ、生活を整える実験中。</li>
+          <li>・ダイエットプロジェクトや詩／音楽づくりを記録予定。</li>
+          <li>・AIと一緒に「面白い未来の種」を集めています。</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="about">
+      <h2>プロフィール</h2>
+      <p class="section-text">
+        ここに自己紹介を書きます。<br />
+        例：<br />
+        1980年代生まれの家電修理屋さん。<br />
+        仕事・健康管理・創作（音楽 / 詩 / 画像）をゆるく実験中。<br />
+        このサイトは、自分の「今」と「変化」を記録するための場所です。
+      </p>
+    </section>
+
+    <section id="services">
+      <h2>やっていること・興味があること</h2>
+      <p class="section-text">
+        将来的に「仕事の案内」や「作品のギャラリー」にもできます。<br />
+        まずは、今やっていること・興味のあることを書いておきましょう。
+      </p>
+
+      <div class="service-list">
+        <div class="service-card">
+          <div class="service-card-title">家電修理</div>
+          <p>
+            エアコン・温水器などの修理／メンテナンス。<br />
+            ※ 実際のメニューや料金表はあとで追加できます。
+          </p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-card-title">ダイエット＆健康ログ</div>
+          <p>
+            体重・食事・運動の記録から得た気づき。<br />
+            将来、ブログ記事風にまとめることもできます。
+          </p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-card-title">音楽・詩・AI作品</div>
+          <p>
+            SUNOで作った曲、AI画像、詩などのリンク集ページを作る予定スペース。
+          </p>
+
+          <div class="audio-group">
+            <audio controls preload="none" src="song8.mp3">
+              お使いのブラウザは audio タグをサポートしていません。
+            </audio>
+
+            <audio controls preload="none" src="song12.mp3">
+              お使いのブラウザは audio タグをサポートしていません。
+            </audio>
+
+            <audio controls preload="none" src="song11.mp3">
+              お使いのブラウザは audio タグをサポートしていません。
+            </audio>
+          </div>
+
+          <a href="song13.mp3" download="song13.mp3" class="download-link">🎵 曲をダウンロード</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="numerology">
+      <h2>数秘・基本3パターン計算</h2>
+
+      <div class="calc-card">
+        <div class="calc-title">数秘・基本3パターン計算</div>
+        <div class="muted">
+          年＝手入力 / 月・日＝スクロール。<br>
+          11/22/33 はマスターナンバーとして保持。②「日にちだけ」は <b>11日・22日なら足さずそのまま</b>。<br>
+          ③「月＋日」は <b>月日を数字ごとに分解して、最後まで1桁になるまで足します</b>。
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="yearInput">年（西暦）</label>
+            <input id="yearInput" type="number" inputmode="numeric" placeholder="例：1985" min="1900" max="2100" />
+          </div>
+
+          <div class="field">
+            <label for="monthSel">月</label>
+            <select id="monthSel"></select>
+          </div>
+
+          <div class="field">
+            <label for="daySel">日</label>
+            <select id="daySel"></select>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top: 14px;">
+          <button id="calcBtn" class="calc-btn">計算</button>
+          <button id="findBtn" class="calc-btn">同じ結果の誕生日を探す</button>
+          <div class="muted">※ ローカル計算（サーバー送信なし）</div>
+        </div>
+
+        <div id="out" class="out"></div>
+        <div id="matches" class="pre" style="display:none;"></div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2>お問い合わせ / メモ</h2>
+      <p class="section-text">
+        ここに連絡先（メールアドレス、Xアカウント、LINEなど）を書けます。<br />
+        まだ公開予定がなければ、ただのメモ欄として使ってもOKです。
+      </p>
+      <p class="section-text" style="margin-top: 8px;">
+        例：<br />
+        ・メール：nakajimail777@gmail.com<br />
+        ・Instagram：<a href="https://www.instagram.com/isaisa0526?igsi=ZGg5OGlmY2xtaHJt" target="_blank" rel="noopener">https://www.instagram.com/isaisa0526</a><br />
+        ・「知り合いの方は、今まで通りLINEでどうぞ」など
+      </p>
+      <div class="hero-buttons" style="margin-top: 12px; margin-bottom: 0;">
+        <a href="https://mail.google.com/mail/?view=cm&amp;fs=1&amp;to=nakajimail777@gmail.com" class="btn-primary" target="_blank" rel="noopener">お問い合わせ</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © <span id="year"></span> My Web / 中島のサイト. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const btn = document.getElementById("menuBtn");
+    const menu = document.getElementById("menuList");
+
+    btn.addEventListener("click", () => {
+      menu.classList.toggle("show");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.remove("show");
+      }
+    });
+
+    const monthSel = document.getElementById("monthSel");
+    const daySel = document.getElementById("daySel");
+
+    for (let m = 1; m <= 12; m++) {
+      const opt = document.createElement("option");
+      opt.value = m;
+      opt.textContent = m + "月";
+      monthSel.appendChild(opt);
+    }
+
+    for (let d = 1; d <= 31; d++) {
+      const opt = document.createElement("option");
+      opt.value = d;
+      opt.textContent = d + "日";
+      daySel.appendChild(opt);
+    }
+
+    (() => {
+      const now = new Date();
+      monthSel.value = String(now.getMonth() + 1);
+      daySel.value = String(now.getDate());
+    })();
+
+    function reduceNumber(n) {
+      const masters = new Set([11, 22, 33]);
+      while (n > 9) {
+        if (masters.has(n)) return n;
+        n = String(n).split("").reduce((a, d) => a + Number(d), 0);
+      }
+      return n;
+    }
+
+    function reduceToSingleDigit(n) {
+      while (n > 9) {
+        n = String(n).split("").reduce((a, d) => a + Number(d), 0);
+      }
+      return n;
+    }
+
+    const meaning = {
+      1: "始まり・自立",
+      2: "協調・感受性",
+      3: "表現・創造性",
+      4: "安定・土台",
+      5: "変化・自由",
+      6: "調和・愛情",
+      7: "探求・内省",
+      8: "現実化・力",
+      9: "完結・統合",
+      11: "直感・感受性（マスター）",
+      22: "構築・現実化（マスター）",
+      33: "奉仕・拡張（マスター）"
+    };
+
+    function digitSumOfNumber(n) {
+      return String(n).split("").reduce((a, d) => a + Number(d), 0);
+    }
+
+    function render(html) {
+      document.getElementById("out").innerHTML = html;
+    }
+
+    document.getElementById("calcBtn").addEventListener("click", () => {
+      const y = Number(document.getElementById("yearInput").value);
+      const m = Number(monthSel.value);
+      const d = Number(daySel.value);
+
+      if (!Number.isFinite(y) || y < 1900 || y > 2100) {
+        render(`<div class="warn">年（例：1985）を正しく入力してください（1900〜2100）。</div>`);
+        return;
+      }
+
+      if (!m || !d) {
+        render(`<div class="warn">月・日を選んでください。</div>`);
+        return;
+      }
+
+      const allDigits = `${y}${String(m).padStart(2, "0")}${String(d).padStart(2, "0")}`;
+      const allRaw = allDigits.split("").reduce((a, n) => a + Number(n), 0);
+      const allRes = reduceNumber(allRaw);
+
+      let dayRaw, dayRes, dayNote;
+      if (d === 11 || d === 22) {
+        dayRaw = d;
+        dayRes = d;
+        dayNote = "（11日/22日生まれは日を分解せず保持）";
+      } else {
+        dayRaw = digitSumOfNumber(d);
+        dayRes = reduceNumber(dayRaw);
+        dayNote = "";
+      }
+
+      const mdDigits = `${m}${d}`;
+      const mdRaw = mdDigits.split("").reduce((a, n) => a + Number(n), 0);
+      const mdRes = reduceToSingleDigit(mdRaw);
+
+      const details =
+`選択された日付：${y}年 ${m}月 ${d}日
+
+① 生年月日を全部足す
+${allDigits.split("").join(" + ")} = ${allRaw} → ${allRes}
+
+② 日にちだけ足す
+${d} → ${dayRaw} → ${dayRes} ${dayNote}
+
+③ 月と日の数字を分解して足す
+${mdDigits.split("").join(" + ")} = ${mdRaw} → ${mdRes}
+
+※ ①と②は 11 / 22 / 33 をマスターナンバーとして保持
+※ ③はマスターナンバーで止めず、最後まで1桁にします`;
+
+      render(`
+        <div>
+          <span class="pill">① 全部足す：<b>${allRes}</b>（途中：${allRaw}）</span>
+          <span class="pill">② 日にち：<b>${dayRes}</b>（途中：${dayRaw}）</span>
+          <span class="pill">③ 月＋日：<b>${mdRes}</b>（途中：${mdRaw}）</span>
+        </div>
+        <div class="muted" style="margin-top:8px;">
+          ②の意味：<b>${meaning[dayRes] ?? "（未定義）"}</b>
+        </div>
+        <div class="pre">${details}</div>
+      `);
+    });
+
+    function daysInMonth(y, m) {
+      return new Date(y, m, 0).getDate();
+    }
+
+    function metricsFor(y, m, d) {
+      const allDigits = `${y}${String(m).padStart(2, "0")}${String(d).padStart(2, "0")}`;
+      const allRaw = allDigits.split("").reduce((a, n) => a + Number(n), 0);
+      const allRes = reduceNumber(allRaw);
+
+      let dayRaw, dayRes;
+      if (d === 11 || d === 22) {
+        dayRaw = d;
+        dayRes = d;
+      } else {
+        dayRaw = digitSumOfNumber(d);
+        dayRes = reduceNumber(dayRaw);
+      }
+
+      const mdDigits = `${m}${d}`;
+      const mdRaw = mdDigits.split("").reduce((a, n) => a + Number(n), 0);
+      const mdRes = reduceToSingleDigit(mdRaw);
+
+      return { allRes, dayRes, mdRes };
+    }
+
+    document.getElementById("findBtn").addEventListener("click", () => {
+      const y = Number(document.getElementById("yearInput").value);
+      const m = Number(monthSel.value);
+      const d = Number(daySel.value);
+      const matchesEl = document.getElementById("matches");
+
+      if (!Number.isFinite(y) || y < 1900 || y > 2100) {
+        matchesEl.style.display = "block";
+        matchesEl.textContent = "先に『年・月・日』を正しく入力してから探してください。";
+        return;
+      }
+
+      const target = metricsFor(y, m, d);
+      const fromYear = 1950;
+      const toYear = 2100;
+      const maxShow = 20;
+      const found = [];
+
+      for (let yy = fromYear; yy <= toYear; yy++) {
+        for (let mm = 1; mm <= 12; mm++) {
+          const last = daysInMonth(yy, mm);
+          for (let dd = 1; dd <= last; dd++) {
+            const met = metricsFor(yy, mm, dd);
+            if (
+              met.allRes === target.allRes &&
+              met.dayRes === target.dayRes &&
+              met.mdRes === target.mdRes
+            ) {
+              found.push(`${yy}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`);
+              if (found.length >= maxShow) break;
+            }
+          }
+          if (found.length >= maxShow) break;
+        }
+        if (found.length >= maxShow) break;
+      }
+
+      matchesEl.style.display = "block";
+      matchesEl.textContent =
+`同じ結果（①=${target.allRes}, ②=${target.dayRes}, ③=${target.mdRes}）の誕生日（最初の${Math.min(found.length, maxShow)}件）:
+${found.join("\n")}
+${found.length >= maxShow ? "\n…（多いので一部のみ表示）" : ""}`;
+    });
+  </script>
+</body>
+</html>
