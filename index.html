@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="数字・カード・対話を通して、自分の中の答えに気づく龍秘術®個人セッションのご案内。">
+  <title>龍秘術®｜自分の中の答えに気づく時間</title>
+  <style>
+    :root {
+      --ink: #172c2d;
+      --deep: #0d2527;
+      --jade: #315f5b;
+      --gold: #b28a43;
+      --gold-light: #dfc991;
+      --paper: #f7f3e9;
+      --paper-deep: #ece5d5;
+      --white: #fffdf7;
+      --line: rgba(178, 138, 67, .3);
+      --shadow: 0 24px 70px rgba(13, 37, 39, .12);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Yu Mincho", "Hiragino Mincho ProN", serif;
+      line-height: 1.9;
+    }
+    a { color: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255,255,255,.12);
+      background: rgba(13, 37, 39, .94);
+      color: var(--white);
+      backdrop-filter: blur(12px);
+    }
+    .nav {
+      max-width: 1120px;
+      min-height: 68px;
+      margin: auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+    .brand { text-decoration: none; letter-spacing: .18em; font-weight: 700; }
+    .brand small { margin-left: 8px; color: var(--gold-light); font-size: .7rem; }
+    .nav-links { display: flex; align-items: center; gap: 22px; }
+    .nav-links a { text-decoration: none; font-size: .86rem; }
+    .nav-links a:hover { color: var(--gold-light); }
+    .nav-cta { padding: 8px 16px; border: 1px solid var(--gold-light); border-radius: 999px; }
+    .menu-button { display: none; border: 0; background: transparent; color: white; font-size: 1.5rem; cursor: pointer; }
+
+    .hero {
+      position: relative;
+      min-height: 720px;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      padding: 110px 24px 90px;
+      color: var(--white);
+      background:
+        radial-gradient(circle at 77% 30%, rgba(223,201,145,.2), transparent 23%),
+        radial-gradient(circle at 12% 80%, rgba(49,95,91,.55), transparent 34%),
+        linear-gradient(135deg, #091d1f 0%, #12383a 55%, #0d2527 100%);
+    }
+    .hero::before, .hero::after {
+      content: "";
+      position: absolute;
+      border: 1px solid rgba(223,201,145,.28);
+      border-radius: 50%;
+    }
+    .hero::before { width: 430px; height: 430px; right: -110px; top: 80px; }
+    .hero::after { width: 250px; height: 250px; right: -20px; top: 170px; }
+    .hero-inner { position: relative; z-index: 1; width: min(980px, 100%); }
+    .eyebrow { margin: 0 0 20px; color: var(--gold-light); letter-spacing: .28em; font-size: .78rem; }
+    h1 { max-width: 760px; margin: 0; font-size: clamp(2.4rem, 7vw, 5.1rem); line-height: 1.35; font-weight: 500; letter-spacing: .06em; }
+    .hero-copy { max-width: 650px; margin: 28px 0 34px; font-size: clamp(1rem, 2vw, 1.2rem); color: rgba(255,255,255,.83); }
+    .actions { display: flex; flex-wrap: wrap; gap: 14px; }
+    .button {
+      display: inline-flex;
+      min-height: 50px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 24px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      text-decoration: none;
+      font-family: system-ui, sans-serif;
+      font-weight: 700;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { background: var(--gold-light); color: var(--deep); box-shadow: 0 12px 34px rgba(223,201,145,.18); }
+    .button-ghost { border-color: rgba(255,255,255,.42); color: white; }
+
+    .section { padding: 96px 24px; }
+    .section:nth-of-type(even) { background: var(--white); }
+    .container { width: min(1040px, 100%); margin: auto; }
+    .section-head { max-width: 720px; margin-bottom: 42px; }
+    .kicker { margin: 0 0 8px; color: var(--gold); letter-spacing: .2em; font: 700 .75rem system-ui, sans-serif; }
+    h2 { margin: 0 0 16px; color: var(--deep); font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 500; line-height: 1.45; }
+    h3 { margin: 0 0 10px; color: var(--deep); font-size: 1.2rem; }
+    .lead { margin: 0; color: #48605e; }
+
+    .about-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; }
+    .seal {
+      aspect-ratio: 1;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: radial-gradient(circle, #fffdf7 0 30%, #ece5d5 31% 52%, #f7f3e9 53%);
+      color: var(--jade);
+      box-shadow: var(--shadow);
+      font-size: clamp(2rem, 7vw, 4rem);
+      letter-spacing: .2em;
+      text-indent: .2em;
+    }
+    .quote { margin: 28px 0 0; padding: 20px 24px; border-left: 3px solid var(--gold); background: rgba(178,138,67,.08); }
+
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card { padding: 28px; border: 1px solid var(--line); border-radius: 18px; background: var(--white); box-shadow: 0 12px 34px rgba(13,37,39,.05); }
+    .card-number { display: block; margin-bottom: 14px; color: var(--gold); font: 700 .78rem system-ui, sans-serif; letter-spacing: .14em; }
+    .card p { margin: 0; color: #536765; font-size: .95rem; }
+
+    .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; counter-reset: flow; }
+    .flow-item { position: relative; padding: 26px 18px; border-top: 1px solid var(--gold); background: rgba(255,255,255,.55); }
+    .flow-item::before { counter-increment: flow; content: "0" counter(flow); display: block; margin-bottom: 12px; color: var(--gold); font: 700 .75rem system-ui, sans-serif; }
+    .flow-item p { margin: 4px 0 0; color: #536765; font-size: .86rem; line-height: 1.65; }
+
+    .number-tool { padding: 38px; border: 1px solid var(--line); border-radius: 24px; background: var(--white); box-shadow: var(--shadow); }
+    .birth-fields { display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 12px; align-items: end; }
+    .birth-field label { display: block; margin-bottom: 6px; color: var(--jade); font: 700 .82rem system-ui, sans-serif; }
+    .birth-field input, .birth-field select { width: 100%; min-height: 48px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); font-size: 1rem; }
+    .calculate-button { min-height: 48px; padding: 10px 24px; border: 0; border-radius: 10px; background: var(--jade); color: white; font-weight: 700; cursor: pointer; }
+    .calculate-button:hover { background: var(--deep); }
+    .number-error { margin: 16px 0 0; color: #9b3c34; font-weight: 700; }
+    .number-results { display: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 28px; }
+    .number-results.visible { display: grid; }
+    .number-result { min-height: 210px; padding: 28px 22px; display: grid; grid-template-rows: auto 1fr auto; align-items: center; border-top: 3px solid var(--gold); background: var(--paper); text-align: center; }
+    .number-result small { display: block; color: var(--deep); font: 700 1.45rem "Yu Mincho", "Hiragino Mincho ProN", serif; letter-spacing: .18em; text-indent: .18em; }
+    .number-result strong { display: grid; place-items: center; margin: 12px 0; color: var(--jade); font-size: 3.2rem; line-height: 1; }
+    .number-result span { min-height: 1.6em; font-size: .92rem; color: #536765; }
+    .number-note { margin: 18px 0 0; color: #667876; font-size: .82rem; }
+
+    .price-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .price-card { padding: 34px; border-radius: 20px; background: var(--deep); color: white; }
+    .price-card.featured { background: var(--jade); outline: 2px solid var(--gold-light); outline-offset: -8px; }
+    .price-card h3 { color: white; }
+    .price { margin: 18px 0; color: var(--gold-light); font-size: 1.5rem; }
+    .price-card ul { padding-left: 1.2em; color: rgba(255,255,255,.78); }
+
+    .profile { display: grid; grid-template-columns: 240px 1fr; gap: 44px; align-items: center; }
+    .profile-mark { aspect-ratio: 1; padding: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--paper-deep); color: var(--jade); font-size: clamp(1.25rem, 3vw, 1.65rem); font-weight: 700; line-height: 1.6; letter-spacing: .12em; text-align: center; }
+
+    .faq { display: grid; gap: 12px; }
+    details { border-bottom: 1px solid var(--line); background: rgba(255,255,255,.52); }
+    summary { padding: 20px; cursor: pointer; color: var(--deep); font-weight: 700; }
+    details p { margin: 0; padding: 0 20px 22px; color: #536765; }
+
+    .contact {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      padding: 60px;
+      background: var(--deep);
+      color: white;
+      text-align: center;
+    }
+    .contact h2 { color: white; }
+    .contact p { max-width: 620px; margin: 0 auto 26px; color: rgba(255,255,255,.75); }
+    .contact-note { margin-top: 16px !important; font-size: .78rem; }
+
+    footer { padding: 28px 24px; background: #071b1c; color: rgba(255,255,255,.55); text-align: center; font: .78rem system-ui, sans-serif; }
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 800px) {
+      .menu-button { display: block; }
+      .nav-links { position: absolute; inset: 68px 0 auto; display: none; flex-direction: column; align-items: stretch; padding: 16px 24px 24px; background: var(--deep); }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 9px 0; }
+      .about-grid, .profile, .price-wrap { grid-template-columns: 1fr; }
+      .birth-fields { grid-template-columns: 1fr 1fr; }
+      .calculate-button { grid-column: 1 / -1; }
+      .number-results { grid-template-columns: 1fr; }
+      .seal, .profile-mark { width: min(300px, 80vw); margin: auto; }
+      .cards { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr 1fr; }
+      .contact { padding: 42px 22px; }
+    }
+    @media (max-width: 520px) {
+      .hero { min-height: 650px; padding-top: 82px; }
+      .section { padding: 72px 20px; }
+      .flow { grid-template-columns: 1fr; }
+      .button { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="メインメニュー">
+      <a class="brand" href="#top">龍秘術®<small>RYUHIJUTSU</small></a>
+      <button class="menu-button" type="button" aria-label="メニューを開く" aria-expanded="false">☰</button>
+      <div class="nav-links">
+        <a href="#about">龍秘術®とは</a><a href="#flow">セッション</a><a href="#numbers">数字体験</a><a href="#price">料金</a><a href="#profile">プロフィール</a><a href="#faq">よくある質問</a><a class="nav-cta" href="#contact">予約・お問い合わせ</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="top">
+      <div class="hero-inner reveal">
+        <p class="eyebrow">数字・カード・対話からひらく</p>
+        <h1>答えは、すでに<br>あなたの中にある。</h1>
+        <p class="hero-copy">龍秘術®は、答えを押しつける占いではありません。数字とカードを手がかりに、対話を通して本音に気づき、次の一歩を見つけるための時間です。</p>
+        <div class="actions"><a class="button button-primary" href="#contact">セッションを相談する</a><a class="button button-ghost" href="#about">龍秘術®について知る</a></div>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <div class="container about-grid">
+        <div class="reveal">
+          <p class="kicker">ABOUT</p><h2>自分を知り、選び直すための対話</h2>
+          <p class="lead">生年月日から導く数字、今の心を映すカード、そして丁寧な対話。三つを重ねながら、言葉にならなかった思いや、これから大切にしたい方向を一緒に見つけていきます。</p>
+          <p class="quote">未来を決めつけるのではなく、いまの自分に必要な視点を受け取り、自分の意思で一歩を選ぶために。</p>
+        </div>
+        <div class="seal reveal" aria-hidden="true">龍秘</div>
+      </div>
+    </section>
+
+    <section class="section" id="recommend">
+      <div class="container">
+        <div class="section-head reveal"><p class="kicker">FOR YOU</p><h2>こんなときに</h2><p class="lead">うまく説明できなくても大丈夫です。いま感じていることから、ゆっくり始めます。</p></div>
+        <div class="cards">
+          <article class="card reveal"><span class="card-number">01</span><h3>選択に迷っている</h3><p>仕事、人間関係、これからの暮らし。考えても答えがまとまらないときに。</p></article>
+          <article class="card reveal"><span class="card-number">02</span><h3>本音を知りたい</h3><p>周りを優先しすぎて、自分が本当はどうしたいのか分からなくなったときに。</p></article>
+          <article class="card reveal"><span class="card-number">03</span><h3>一歩を踏み出したい</h3><p>変わりたい気持ちはあるのに、怖さや不安で動けないと感じるときに。</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="flow">
+      <div class="container">
+        <div class="section-head reveal"><p class="kicker">SESSION FLOW</p><h2>セッションの流れ</h2></div>
+        <div class="flow">
+          <div class="flow-item reveal"><h3>誕生日</h3><p>生年月日を伺い、あなたを表す数字を導きます。</p></div>
+          <div class="flow-item reveal"><h3>数字</h3><p>持って生まれた性質や今のテーマを読み解きます。</p></div>
+          <div class="flow-item reveal"><h3>カード</h3><p>気になるテーマに対し、カードから視点を得ます。</p></div>
+          <div class="flow-item reveal"><h3>対話</h3><p>感じたことを言葉にしながら、本音を整理します。</p></div>
+          <div class="flow-item reveal"><h3>次の一歩</h3><p>日常に持ち帰れる、小さく具体的な一歩を決めます。</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="numbers">
+      <div class="container">
+        <div class="section-head reveal"><p class="kicker">NUMBER EXPERIENCE</p><h2>あなたの数字を出してみる</h2><p class="lead">生年月日から、3つの計算結果を表示します。</p></div>
+        <div class="number-tool reveal">
+          <div class="birth-fields">
+            <div class="birth-field"><label for="birthYear">年（西暦）</label><input id="birthYear" type="number" inputmode="numeric" min="1900" max="2100" placeholder="例：2026"></div>
+            <div class="birth-field"><label for="birthMonth">月</label><select id="birthMonth"></select></div>
+            <div class="birth-field"><label for="birthDay">日</label><select id="birthDay"></select></div>
+            <button class="calculate-button" id="calculateNumbers" type="button">数字を出す</button>
+          </div>
+          <p class="number-error" id="numberError" role="alert"></p>
+          <div class="number-results" id="numberResults" aria-live="polite">
+            <div class="number-result"><small>龍性</small><strong id="allNumber">—</strong><span id="allMeaning"></span></div>
+            <div class="number-result"><small>龍導</small><strong id="dayNumber">—</strong><span id="dayMeaning"></span></div>
+            <div class="number-result"><small>龍望</small><strong id="monthDayNumber">—</strong><span id="monthDayMeaning"></span></div>
+          </div>
+          <p class="number-note">①と②は11・22・33をマスターナンバーとして残し、③は最後まで1桁にします。表示は簡易体験です。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="price">
+      <div class="container">
+        <div class="section-head reveal"><p class="kicker">MENU</p><h2>料金・メニュー</h2><p class="lead">内容と料金は仮表示です。実際のメニューが決まり次第、差し替えられます。</p></div>
+        <div class="price-wrap">
+          <article class="price-card reveal"><h3>はじめての龍秘術®</h3><p class="price">料金準備中 ／ 約60分</p><ul><li>数字から見る基本の性質</li><li>今のテーマをカードで確認</li><li>対話と振り返り</li></ul></article>
+          <article class="price-card featured reveal"><h3>じっくり個人セッション</h3><p class="price">料金準備中 ／ 約90分</p><ul><li>数字をより深く読み解く</li><li>複数のテーマをカードで確認</li><li>次の一歩を一緒に整理</li></ul></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="profile">
+      <div class="container profile">
+        <div class="profile-mark reveal" aria-hidden="true">スピリット　ドラゴン</div>
+        <div class="reveal"><p class="kicker">PROFILE</p><h2>対話する人</h2><p class="lead">ここに、龍秘術®と出会ったきっかけ、セッションで大切にしていること、資格やこれまでの活動などを掲載します。初めての方にも人柄が伝わる、自然な言葉で整えていきましょう。</p></div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-head reveal"><p class="kicker">FAQ</p><h2>よくある質問</h2></div>
+        <div class="faq reveal">
+          <details><summary>占いとは違うのですか？</summary><p>未来を断定したり、答えを押しつけたりするものではありません。数字とカードをきっかけに、対話しながら自分の中の答えに気づく時間です。</p></details>
+          <details><summary>相談内容がまとまっていなくても大丈夫ですか？</summary><p>はい。うまく言葉にできない状態からでも大丈夫です。話せるところから、ゆっくり整理していきます。</p></details>
+          <details><summary>オンラインでも受けられますか？</summary><p>提供方法は現在準備中です。対面・オンラインの対応範囲が決まり次第、こちらに掲載します。</p></details>
+          <details><summary>個人情報はどのように扱われますか？</summary><p>セッションで伺った内容は慎重に扱い、本人の許可なく第三者へ共有しません。</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container contact reveal">
+        <p class="kicker">CONTACT</p><h2>話してみようかな、と思ったら</h2>
+        <p>ご質問だけでも大丈夫です。LINE・Instagram・予約フォームのリンクが決まり次第、ここからすぐに連絡できるようにします。</p>
+        <div class="actions" style="justify-content:center"><a class="button button-primary" href="mailto:">お問い合わせ先を設定する</a></div>
+        <p class="contact-note">※ 現在はモックのため、連絡先リンクは未設定です。</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>© <span id="year"></span> 龍秘術®</footer>
+  <script>
+    const menuButton = document.querySelector('.menu-button');
+    const navLinks = document.querySelector('.nav-links');
+    menuButton.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      menuButton.setAttribute('aria-expanded', String(open));
+      menuButton.textContent = open ? '×' : '☰';
+    });
+    navLinks.addEventListener('click', event => {
+      if (event.target.matches('a')) {
+        navLinks.classList.remove('open');
+        menuButton.setAttribute('aria-expanded', 'false');
+        menuButton.textContent = '☰';
+      }
+    });
+    document.querySelector('#year').textContent = new Date().getFullYear();
+    const birthMonth = document.querySelector('#birthMonth');
+    const birthDay = document.querySelector('#birthDay');
+    for (let month = 1; month <= 12; month += 1) {
+      birthMonth.add(new Option(`${month}月`, month));
+    }
+    for (let day = 1; day <= 31; day += 1) {
+      birthDay.add(new Option(`${day}日`, day));
+    }
+    const today = new Date();
+    birthMonth.value = String(today.getMonth() + 1);
+    birthDay.value = String(today.getDate());
+
+    function reduceNumber(number) {
+      const masters = new Set([11, 22, 33]);
+      while (number > 9) {
+        if (masters.has(number)) return number;
+        number = String(number).split('').reduce((sum, digit) => sum + Number(digit), 0);
+      }
+      return number;
+    }
+
+    function reduceToSingleDigit(number) {
+      while (number > 9) {
+        number = String(number).split('').reduce((sum, digit) => sum + Number(digit), 0);
+      }
+      return number;
+    }
+
+    const numberMeanings = {
+      1: '始まり・自立', 2: '協調・感受性', 3: '表現・創造性', 4: '安定・土台',
+      5: '変化・自由', 6: '調和・愛情', 7: '探求・内省', 8: '現実化・力', 9: '完結・統合',
+      11: '直感・感受性', 22: '構築・現実化', 33: '奉仕・拡張'
+    };
+
+    document.querySelector('#calculateNumbers').addEventListener('click', () => {
+      const year = Number(document.querySelector('#birthYear').value);
+      const month = Number(birthMonth.value);
+      const day = Number(birthDay.value);
+      const error = document.querySelector('#numberError');
+      const lastDay = new Date(year, month, 0).getDate();
+      if (!Number.isFinite(year) || year < 1900 || year > 2100) {
+        error.textContent = '1900〜2100の西暦を入力してください。';
+        document.querySelector('#numberResults').classList.remove('visible');
+        return;
+      }
+      if (day > lastDay) {
+        error.textContent = '存在する日付を選んでください。';
+        document.querySelector('#numberResults').classList.remove('visible');
+        return;
+      }
+      error.textContent = '';
+      const allDigits = `${year}${String(month).padStart(2, '0')}${String(day).padStart(2, '0')}`;
+      const allRaw = [...allDigits].reduce((sum, digit) => sum + Number(digit), 0);
+      const allResult = reduceNumber(allRaw);
+      const dayResult = day === 11 || day === 22 ? day : reduceNumber([...String(day)].reduce((sum, digit) => sum + Number(digit), 0));
+      const monthDayRaw = [...`${month}${day}`].reduce((sum, digit) => sum + Number(digit), 0);
+      const monthDayResult = reduceToSingleDigit(monthDayRaw);
+      document.querySelector('#allNumber').textContent = allResult;
+      document.querySelector('#dayNumber').textContent = dayResult;
+      document.querySelector('#monthDayNumber').textContent = monthDayResult;
+      document.querySelector('#allMeaning').textContent = numberMeanings[allResult] || '';
+      document.querySelector('#dayMeaning').textContent = numberMeanings[dayResult] || '';
+      document.querySelector('#monthDayMeaning').textContent = numberMeanings[monthDayResult] || '';
+      document.querySelector('#numberResults').classList.add('visible');
+    });
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: .12 });
+    document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
+  </script>
+</body>
+</html>
