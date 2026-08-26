@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>次のページ</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #08152f;
+      color: #c4b5fd;
+      font-family: sans-serif;
+    }
+
+    main {
+      display: grid;
+      justify-items: center;
+      gap: 24px;
+      width: min(900px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2.75rem;
+    }
+
+    a,
+    button {
+      padding: 10px 20px;
+      border: 0;
+      border-radius: 8px;
+      background: #6d28d9;
+      color: #fff;
+      font: 600 1rem sans-serif;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .stage {
+      width: min(560px, 100%);
+      min-height: 280px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 1px solid rgba(196, 181, 253, 0.35);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.07);
+      perspective: 800px;
+      transition: background 600ms ease, transform 250ms ease;
+    }
+
+    .sample {
+      display: grid;
+      justify-items: center;
+      gap: 16px;
+      padding: 24px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .sample img {
+      max-width: min(360px, 70vw);
+      max-height: 190px;
+      border-radius: 12px;
+      object-fit: contain;
+      transition: opacity 400ms ease, transform 400ms ease;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .fade { animation: fade 700ms ease both; }
+    .slide { animation: slide 700ms ease both; }
+    .bounce { animation: bounce 700ms ease both; }
+    .zoom { animation: zoom 700ms ease both; }
+    .turn { animation: turn 800ms ease both; transform-style: preserve-3d; }
+    .gradient { background: linear-gradient(135deg, #6d28d9, #db2777, #f59e0b); }
+    .photo-hidden { opacity: 0; transform: scale(0.85); }
+
+    .ripple {
+      position: fixed;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 3px solid #fbbf24;
+      pointer-events: none;
+      animation: ripple 700ms ease-out forwards;
+    }
+
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slide { from { opacity: 0; transform: translateX(-100px); } to { opacity: 1; transform: none; } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(-45px); } 70% { transform: translateY(-12px); } }
+    @keyframes zoom { from { opacity: 0; transform: scale(0.45); } to { opacity: 1; transform: scale(1); } }
+    @keyframes turn { from { opacity: 0; transform: rotateY(-90deg); } to { opacity: 1; transform: rotateY(0); } }
+    @keyframes ripple { to { opacity: 0; transform: scale(12); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 1ms !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>次のページ</h1>
+    <div class="stage" id="stage">
+      <div class="sample" id="sample">
+        <span id="sampleText">効果の見本</span>
+        <img id="samplePhoto" src="photo.png" alt="">
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" data-effect="fade">フェード</button>
+      <button type="button" data-effect="slide">スライド</button>
+      <button type="button" data-effect="bounce">バウンド</button>
+      <button type="button" data-effect="zoom">ズーム</button>
+      <button type="button" data-effect="gradient">グラデーション</button>
+      <button type="button" data-effect="mouse">マウス反応</button>
+      <button type="button" data-effect="ripple">波紋</button>
+      <button type="button" data-effect="photo">写真切り替え</button>
+      <button type="button" data-effect="turn">ページめくり</button>
+      <button type="button" data-effect="typewriter">タイプライター</button>
+    </div>
+    <a href="particles.html">もう次のページへ</a>
+    <a href="index.html">元のページへ戻る</a>
+  </main>
+  <script>
+    const stage = document.querySelector('#stage');
+    const sample = document.querySelector('#sample');
+    const sampleText = document.querySelector('#sampleText');
+    const samplePhoto = document.querySelector('#samplePhoto');
+    const animationClasses = ['fade', 'slide', 'bounce', 'zoom', 'turn'];
+
+    function replay(className) {
+      sample.classList.remove(...animationClasses);
+      void sample.offsetWidth;
+      sample.classList.add(className);
+    }
+
+    function typeText() {
+      const text = '文字が一つずつ現れます';
+      sampleText.textContent = '';
+      let index = 0;
+      const timer = setInterval(() => {
+        sampleText.textContent += text[index];
+        index += 1;
+        if (index === text.length) clearInterval(timer);
+      }, 90);
+    }
+
+    document.querySelector('.controls').addEventListener('click', (event) => {
+      const button = event.target.closest('button');
+      if (!button) return;
+      const effect = button.dataset.effect;
+
+      if (animationClasses.includes(effect)) replay(effect);
+      if (effect === 'gradient') stage.classList.toggle('gradient');
+      if (effect === 'photo') samplePhoto.classList.toggle('photo-hidden');
+      if (effect === 'typewriter') typeText();
+      if (effect === 'ripple') {
+        const circle = document.createElement('span');
+        const rect = button.getBoundingClientRect();
+        circle.className = 'ripple';
+        circle.style.left = `${rect.left + rect.width / 2 - 9}px`;
+        circle.style.top = `${rect.top + rect.height / 2 - 9}px`;
+        document.body.append(circle);
+        circle.addEventListener('animationend', () => circle.remove());
+      }
+      if (effect === 'mouse') {
+        stage.onmousemove = (moveEvent) => {
+          const rect = stage.getBoundingClientRect();
+          const x = (moveEvent.clientX - rect.left) / rect.width - 0.5;
+          const y = (moveEvent.clientY - rect.top) / rect.height - 0.5;
+          sample.style.transform = `rotateY(${x * 18}deg) rotateX(${-y * 18}deg)`;
+        };
+        stage.onmouseleave = () => { sample.style.transform = '' };
+        sampleText.textContent = '見本にマウスを動かしてみてください';
+      }
+    });
+  </script>
+</body>
+</html>

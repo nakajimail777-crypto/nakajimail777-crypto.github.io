@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>パーティクルのページ</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; background: #08152f; color: #fff; font-family: sans-serif; }
+    main { display: grid; justify-items: center; gap: 22px; width: min(900px, calc(100% - 32px)); margin: auto; padding: 36px 0; }
+    h1 { margin: 0; text-align: center; }
+    .stage { position: relative; width: min(720px, 100%); height: 400px; overflow: hidden; border: 1px solid #ffffff44; border-radius: 18px; background: #030817; }
+    canvas { width: 100%; height: 100%; display: block; }
+    #label { position: absolute; top: 14px; left: 14px; padding: 7px 12px; border-radius: 99px; background: #0009; font-weight: 700; }
+    .controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    button, a { padding: 10px 18px; border: 0; border-radius: 8px; background: #6d28d9; color: #fff; font: 600 1rem sans-serif; text-decoration: none; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>パーティクルのページ</h1>
+    <div class="stage"><canvas id="canvas"></canvas><div id="label">光の粒</div></div>
+    <div class="controls">
+      <button data-kind="glow">光の粒</button><button data-kind="spark">火花</button>
+      <button data-kind="twinkle">キラキラ</button><button data-kind="snow">雪</button>
+      <button data-kind="rain">雨</button><button data-kind="bubble">泡</button>
+      <button data-kind="smoke">煙</button><button data-kind="confetti">紙吹雪</button>
+      <button data-kind="star">星</button><button data-kind="petal">花びら</button>
+      <button data-kind="glowstar">光の粒＋星</button>
+    </div>
+    <a href="next.html">前のページへ戻る</a>
+  </main>
+  <script>
+    const canvas = document.querySelector('#canvas');
+    const ctx = canvas.getContext('2d');
+    const stage = document.querySelector('.stage');
+    const label = document.querySelector('#label');
+    const names = { glow:'光の粒', spark:'火花', twinkle:'キラキラ', snow:'雪', rain:'雨', bubble:'泡', smoke:'煙', confetti:'紙吹雪', star:'星', petal:'花びら', glowstar:'光の粒＋星' };
+    let kind = 'glow', items = [], w = 0, h = 0;
+
+    function item() {
+      return { x: Math.random()*w, y: Math.random()*h, s: Math.random()*4+2, vx:(Math.random()-.5)*1.4, vy:Math.random()*2+0.6, p:Math.random()*6.28, c:['#fbbf24','#a78bfa','#60a5fa','#f472b6','#34d399'][Math.floor(Math.random()*5)] };
+    }
+    function reset() { items = Array.from({length: kind==='rain'?70:45}, item); label.textContent = names[kind]; }
+    function resize() { const r=stage.getBoundingClientRect(), d=devicePixelRatio||1; w=r.width; h=r.height; canvas.width=w*d; canvas.height=h*d; ctx.setTransform(d,0,0,d,0,0); reset(); }
+    function recycle(p, bottom=false) { Object.assign(p,item()); p.y=bottom?h+15:-15; }
+
+    function draw(p) {
+      ctx.globalAlpha=1; ctx.shadowBlur=0;
+      if (kind==='glow'||kind==='twinkle') {
+        const g=(Math.sin(p.p)+1)/2; ctx.fillStyle=kind==='glow'?'#a78bfa':'#fbbf24'; ctx.shadowColor=ctx.fillStyle; ctx.shadowBlur=14*g; ctx.globalAlpha=.2+g*.8; ctx.beginPath(); ctx.arc(p.x,p.y,p.s*(.5+g),0,6.28); ctx.fill(); p.p+=.04;
+      } else if (kind==='spark') {
+        ctx.fillStyle='#ff8a00'; ctx.shadowColor='#ff5a00'; ctx.shadowBlur=9; ctx.fillRect(p.x,p.y,p.s,p.s); p.x+=p.vx; p.y-=p.vy*1.8; if(p.y<-10) recycle(p,true);
+      } else if (kind==='snow') {
+        ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(p.x,p.y,p.s*.7,0,6.28); ctx.fill(); p.x+=Math.sin(p.p)*.4; p.y+=p.vy*.6; p.p+=.03;
+      } else if (kind==='rain') {
+        ctx.strokeStyle='#60a5fa'; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x-3,p.y+18); ctx.stroke(); p.y+=p.vy*4;
+      } else if (kind==='bubble') {
+        ctx.strokeStyle='#93c5fd'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(p.x,p.y,p.s*1.5,0,6.28); ctx.stroke(); p.y-=p.vy*.7; if(p.y<-15) recycle(p,true);
+      } else if (kind==='smoke') {
+        ctx.fillStyle='#d1d5db22'; ctx.beginPath(); ctx.arc(p.x,p.y,p.s*4,0,6.28); ctx.fill(); p.x+=Math.sin(p.p)*.3; p.y-=p.vy*.3; p.p+=.02; if(p.y<-25) recycle(p,true);
+      } else if (kind==='confetti') {
+        ctx.fillStyle=p.c; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.p); ctx.fillRect(-p.s,-p.s/2,p.s*2,p.s); ctx.restore(); p.p+=.08; p.y+=p.vy;
+      } else if (kind==='glowstar') {
+        const g=(Math.sin(p.p)+1)/2;
+        ctx.globalAlpha=.25+g*.75;
+        ctx.fillStyle=p.c;
+        ctx.shadowColor=p.c;
+        ctx.shadowBlur=18*g;
+        ctx.font=`${p.s*(3+g)}px serif`;
+        ctx.fillText('★',p.x,p.y);
+        p.p+=.04;
+        p.x+=p.vx*.15;
+      } else if (kind==='star') {
+        ctx.fillStyle='#fde68a'; ctx.font=`${p.s*4}px serif`; ctx.fillText('★',p.x,p.y); p.p+=.03;
+      } else if (kind==='petal') {
+        ctx.fillStyle='#f9a8d4'; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.p); ctx.beginPath(); ctx.ellipse(0,0,p.s,p.s*.55,0,0,6.28); ctx.fill(); ctx.restore(); p.p+=.04; p.x+=Math.sin(p.p)*.5; p.y+=p.vy*.6;
+      }
+      if(p.y>h+25||p.x<-30||p.x>w+30) recycle(p,false);
+    }
+    function animate(){ ctx.clearRect(0,0,w,h); items.forEach(draw); requestAnimationFrame(animate); }
+    document.querySelector('.controls').onclick=e=>{ const b=e.target.closest('button'); if(b){kind=b.dataset.kind; reset();} };
+    addEventListener('resize',resize); resize(); animate();
+  </script>
+</body>
+</html>
