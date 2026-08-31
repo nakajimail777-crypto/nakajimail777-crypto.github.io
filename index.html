@@ -151,6 +151,20 @@
     .number-result span { min-height: 1.6em; font-size: .92rem; color: #536765; }
     .number-note { margin: 18px 0 0; color: #667876; font-size: .82rem; }
 
+    .dragon-gate {
+      margin-top: 32px;
+      padding: 40px 34px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(223,201,145,.16), rgba(49,95,91,.08));
+      text-align: center;
+      box-shadow: 0 12px 34px rgba(13,37,39,.05);
+    }
+    .dragon-gate h3 { font-size: clamp(1.7rem, 4vw, 2.4rem); font-weight: 500; }
+    .dragon-question { margin: 18px auto 12px; color: var(--deep); font-size: clamp(1.2rem, 3vw, 1.55rem); }
+    .dragon-gate .actions { justify-content: center; margin-top: 24px; }
+    .dragon-guide { margin: 18px auto 0; color: #536765; font-size: .9rem; }
+
     .price-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
     .price-card { padding: 34px; border-radius: 20px; background: var(--deep); color: white; }
     .price-card.featured { background: var(--jade); outline: 2px solid var(--gold-light); outline-offset: -8px; }
@@ -283,6 +297,15 @@
             <div class="number-result"><small>龍望</small><strong id="monthDayNumber">—</strong><span id="monthDayMeaning"></span></div>
           </div>
           <p class="number-note">表示は簡易体験です。</p>
+        </div>
+
+        <div class="dragon-gate reveal" id="dragon-gate">
+          <p class="kicker">RYU NO TOBIRA</p>
+          <h3>龍の扉</h3>
+          <p class="dragon-question">いま、本当は何を選びたいですか？</p>
+          <p class="lead">答えを急がず、浮かんだ言葉をひとつだけ心に置いてみてください。</p>
+          <div class="actions"><a class="button button-primary" href="https://www.instagram.com/isaisa0526?igsi=ZGg5OGlmY2xtaHJt">この問いをもう少し深める</a></div>
+          <p class="dragon-guide">InstagramのDMで「龍の扉」と送ってください。最初の一歩をご案内します。</p>
         </div>
       </div>
     </section>
