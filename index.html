@@ -222,6 +222,20 @@
       *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
       .reveal { opacity: 1; transform: none; }
     }
+    .reading-section { scroll-margin-top: 90px; }
+    .reading-section .section-head { margin-inline: auto; text-align: center; }
+    .reading-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; max-width: 840px; margin: auto; }
+    .reading-button { min-height: 88px; padding: 22px 18px; border: 1px solid var(--gold); border-radius: 16px; background: var(--deep); color: var(--gold-light); font: inherit; font-size: 1.05rem; cursor: pointer; transition: background .2s, transform .2s; }
+    .reading-button:hover { background: var(--jade); transform: translateY(-2px); }
+    .reading-button:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+    @media (max-width: 600px) { .reading-buttons { grid-template-columns: 1fr; } }
+    .reading-article { max-width: 720px; margin: 42px auto 0; padding: clamp(22px, 5vw, 48px); background: var(--white); border: 1px solid var(--line); border-radius: 20px; }
+    .reading-article[hidden] { display: none; }
+    .reading-article h3 { font-size: 1.5rem; scroll-margin-top: 100px; }
+    .reading-article p { margin: 0 0 1.35em; overflow-wrap: anywhere; }
+    .reading-article hr { width: 64px; margin: 40px auto; border: 0; border-top: 1px solid var(--gold); }
+    .reading-button[aria-expanded="true"] { background: var(--jade); box-shadow: 0 0 0 2px var(--gold); }
+    .reading-close { font: inherit; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -349,10 +363,249 @@
         <p class="contact-note">※ 現在はモックのため、連絡先リンクは未設定です。</p>
       </div>
     </section>
+    <section class="section reading-section" id="reading">
+      <div class="container">
+        <div class="section-head"><p class="kicker">READING</p><h2>今のあなたに近いものを<br>選んでください</h2></div>
+        <div class="reading-buttons" aria-label="今の気持ちから選ぶ">
+          <button class="reading-button" type="button" aria-expanded="false" aria-controls="reading-article-0">決められないとき</button>
+          <button class="reading-button" type="button" aria-expanded="false" aria-controls="reading-article-1">過去を後悔しているとき</button>
+          <button class="reading-button" type="button" aria-expanded="false" aria-controls="reading-article-2">人の目が気になるとき</button>
+          <button class="reading-button" type="button" aria-expanded="false" aria-controls="reading-article-3">なんとなく悩んでいるとき</button>
+        </div>
+      </div>
+    </section>
+        <article class="reading-article" id="reading-article-0" hidden aria-labelledby="reading-title-0">
+          <h3 id="reading-title-0" tabindex="-1">決められないとき</h3>
+          <p>決められないときは、<br>まだ答えが出ていないだけかもしれません。</p>
+          <p>決められない自分を見て、</p>
+          <p>「優柔不断だな」<br>「早く決めなきゃ」<br>「こんなことも決められないのか」</p>
+          <p>と思うこともあるかもしれません。</p>
+          <p>でも、迷うということは、<br>それだけ大切にしたいものが複数あるということでもあります。</p>
+          <p>どちらも捨てたくない。</p>
+          <p>失敗したくない。</p>
+          <p>後悔したくない。</p>
+          <p>誰かを悲しませたくない。</p>
+          <p>自分にも嘘をつきたくない。</p>
+          <p>だから、迷います。</p>
+          <p>大切にしたいものがあるからこそ、迷っているのかもしれません。</p>
+          <p>だからまず、</p>
+          <p>「決められない」</p>
+          <p>ではなく、</p>
+          <p>「私は今、何かを大事にしながら選ぼうとしている」</p>
+          <p>と考えてみてもいいかもしれません。</p>
+          <p>そして、すべての選択には、<br>選んでみないと分からない部分があります。</p>
+          <p>どれだけ考えても、未来を完全に見ることはできません。</p>
+          <p>だから選択とは、</p>
+          <p>未来を当てることではなく、</p>
+          <p>今の自分が大事にしたいものを材料にして、<br>ひとまず一つの方向へ進んでみることなのかもしれません。</p>
+          <p>もし違ったら、また考えればいい。</p>
+          <p>選び直してもいい。</p>
+          <p>選び直せることもあります。元には戻せなくても、ここから変えられることがあるかもしれません。</p>
+          <p>そしてもちろん、</p>
+          <p>今は選ばずに保留することもできます。</p>
+          <p>保留も、一つの選択です。</p>
+          <p>今この瞬間に、人生全部を決める必要はありません。</p>
+          <p>必要なのは、<br>次の一歩だけかもしれません。</p>
+          <p>正解を見つけてから進むのではなく、</p>
+          <p>進みながら、</p>
+          <p>「ああ、こっちだったのか」</p>
+          <p>と分かることもあります。</p>
+          <p>だから今は、</p>
+          <p>「どれが絶対に正解だろう」</p>
+          <p>ではなく、</p>
+          <p>「今の私は、どちらを少し生きてみたいだろう」</p>
+          <p>と聞いてみてください。</p>
+          <p>答えが出れば進む。</p>
+          <p>出なければ、もう少し待つ。</p>
+          <p>どちらでも大丈夫です。</p>
+          <p>あなたは今、まだ途中にいます。</p>
+          <button class="reading-close button button-primary" type="button">四つのボタンに戻る</button>
+        </article>
+        <article class="reading-article" id="reading-article-1" hidden aria-labelledby="reading-title-1">
+          <h3 id="reading-title-1" tabindex="-1">過去を後悔しているとき</h3>
+          <p>「あのとき、別の選択をしていれば。」</p>
+          <p>そう思うことがあります。</p>
+          <p>でも、</p>
+          <p>今のあなたは、<br>あのときのあなたより多くのことを知っています。</p>
+          <p>結果も知っています。</p>
+          <p>何が起きたかも知っています。</p>
+          <p>どんな気持ちになるかも知っています。</p>
+          <p>だから今振り返ると、</p>
+          <p>「あっちを選べばよかった」</p>
+          <p>と思えるのは、とても自然なことです。</p>
+          <p>けれど、あのときのあなたは、<br>その結果をまだ知りませんでした。</p>
+          <p>そのとき見えていたもの。</p>
+          <p>そのとき持っていた経験。</p>
+          <p>そのとき感じていた不安。</p>
+          <p>そのとき大切にしていたこと。</p>
+          <p>その中で、何かを選びました。</p>
+          <p>今の自分なら違う選択をする。</p>
+          <p>そう思えるなら、</p>
+          <p>それは過去の自分が間違っていた証拠というより、</p>
+          <p>今の自分が何かを知った証拠かもしれません。</p>
+          <p>失敗したから分かった。</p>
+          <p>傷ついたから分かった。</p>
+          <p>遠回りしたから分かった。</p>
+          <p>選んだから分かった。</p>
+          <p>もし何も経験していなければ、<br>今そのことに気づいていなかったかもしれません。</p>
+          <p>過去そのものは変えられません。</p>
+          <p>でも、</p>
+          <p>過去が自分にとって何だったのかは、<br>これから変わることがあります。</p>
+          <p>今すぐ、その経験に意味を見つけなくても大丈夫です。</p>
+          <p>ずっと「失敗」だと思っていたことが、</p>
+          <p>数年後には、</p>
+          <p>「あれがあったから変われた」</p>
+          <p>になることがあります。</p>
+          <p>だから、</p>
+          <p>今すぐ過去に最終判決を出さなくてもいいのです。</p>
+          <p>まだ人生の途中だからです。</p>
+          <p>そして、過去を思い出して苦しくなったら、</p>
+          <p>一つだけ考えてみてください。</p>
+          <p>「あの経験をした今の私は、次に何を選ぶだろう。」</p>
+          <p>後悔は、</p>
+          <p>過去へ戻るためだけにあるものではありません。</p>
+          <p>これからの選択を変える材料にもなります。</p>
+          <p>過去の自分を責め続けなくても、</p>
+          <p>学んだことは失われません。</p>
+          <p>今のあなたが、</p>
+          <p>少し違う選択をできるなら、</p>
+          <p>その過去はもう、</p>
+          <p>ただの失敗ではないのかもしれません。</p>
+          <button class="reading-close button button-primary" type="button">四つのボタンに戻る</button>
+        </article>
+        <article class="reading-article" id="reading-article-2" hidden aria-labelledby="reading-title-2">
+          <h3 id="reading-title-2" tabindex="-1">人の目が気になるとき</h3>
+          <p>人からどう思われるかが気になる。</p>
+          <p>嫌われたくない。</p>
+          <p>変な人だと思われたくない。</p>
+          <p>失望させたくない。</p>
+          <p>そう思うのは、<br>人と関わりながら生きているなら自然なことです。</p>
+          <p>誰の目も気にしないで生きることは、<br>たぶん簡単ではありません。</p>
+          <p>でも、</p>
+          <p>人の目を気にすることと、</p>
+          <p>人の目だけで自分の人生を決めることは、</p>
+          <p>少し違います。</p>
+          <p>誰かがあなたに何かを期待しているとしても、<br>その期待は、その人の中にあります。</p>
+          <p>あなたが全部叶えることはできません。</p>
+          <p>ある人に好かれる選択が、<br>別の人には理解されないこともあります。</p>
+          <p>誰にも嫌われないように。</p>
+          <p>誰にも失望されないように。</p>
+          <p>誰にも変だと思われないように。</p>
+          <p>そうやって選んでいくと、</p>
+          <p>最後に一人だけ、<br>置いていかれる人がいるかもしれません。</p>
+          <p>自分です。</p>
+          <p>もちろん、</p>
+          <p>好き勝手に生きればいいということではありません。</p>
+          <p>人を大切にすること。</p>
+          <p>相手の気持ちを考えること。</p>
+          <p>迷惑をかけないようにすること。</p>
+          <p>それも大事です。</p>
+          <p>でも、</p>
+          <p>相手を大切にすることと、<br>相手の期待通りに生きることは同じではありません。</p>
+          <p>「あなたの気持ちは分かる。」</p>
+          <p>そして、</p>
+          <p>「それでも私は、こちらを選びたい。」</p>
+          <p>その二つは、同時に存在できます。</p>
+          <p>誰かを否定しなくても、<br>自分の選択をすることはできます。</p>
+          <p>もし今、</p>
+          <p>人からどう思われるかで苦しくなっているなら、</p>
+          <p>少しだけ問いを変えてみてください。</p>
+          <p>「みんなはどう思うだろう。」</p>
+          <p>ではなく、</p>
+          <p>「私は、自分のこの選択をどう思うだろう。」</p>
+          <p>今日の自分ではなく、</p>
+          <p>少し先の自分でもいいかもしれません。</p>
+          <p>半年後の自分。</p>
+          <p>一年後の自分。</p>
+          <p>その自分が今のあなたを見たとき、</p>
+          <p>どんな選択をしていてほしいでしょう。</p>
+          <p>人の目は、変わります。</p>
+          <p>人の評価も、変わります。</p>
+          <p>そして、そもそも他人は、<br>あなたが思っているほど長い時間あなたのことを考えていないかもしれません。</p>
+          <p>だから、</p>
+          <p>全部を無視する必要はありません。</p>
+          <p>でも、</p>
+          <p>全部を背負う必要もありません。</p>
+          <p>人の声を聞きながら、</p>
+          <p>最後の一票だけは、</p>
+          <p>自分に残しておいてください。</p>
+          <button class="reading-close button button-primary" type="button">四つのボタンに戻る</button>
+        </article>
+        <article class="reading-article" id="reading-article-3" hidden aria-labelledby="reading-title-3">
+          <h3 id="reading-title-3" tabindex="-1">なんとなく悩んでいるとき</h3>
+          <p>今、頭の中にあることを、すぐに解決しなくても大丈夫です。人は悩みがあると、それを「今すぐ何とかしなければならないもの」として扱いやすくなります。けれど、すべての悩みが、今この瞬間に答えを必要としているわけではありません。</p>
+          <p>答えがまだ見つかっていないことと、何も進んでいないことは、同じではありません。考えている途中という状態があります。決めていないという選択もあります。少し離れて見るという選択もあります。</p>
+          <p>今日は決めない、という選択もあります。そして、それらはどれも、人生が止まっているという意味ではありません。</p>
+          <hr>
+          <p>悩みについて考えているとき、私たちはときどき、「正しい答えはどれだろう」と探します。けれど、人生の選択には、選ぶ前から正解が書かれているとは限りません。Aを選べばAの続きを生きることになり、Bを選べばBの続きを生きることになります。</p>
+          <p>そして、どちらを選んでも、その先でまた選ぶことができます。一度選んだからといって、永遠にその道を歩き続けなければならないわけではありません。人は途中で立ち止まれます。方向を変えられます。</p>
+          <p>やめることもできます。戻ることもできます。選び直すこともできます。つまり、今の選択に人生のすべてを背負わせなくてもいいのです。</p>
+          <hr>
+          <p>もしかすると、あなたが本当に怖いのは、「間違った選択をすること」ではないのかもしれません。その選択によって、後悔すること。誰かをがっかりさせること。失敗した自分を見ること。</p>
+          <p>時間を無駄にしたと思うこと。今まで築いてきたものを失うこと。そういう未来を想像しているのかもしれません。でも、まだ起きていない未来は、今、頭の中に存在している未来です。想像することはできます。</p>
+          <p>備えることもできます。けれど、まだ生きてはいません。今ここにあるのは、未来そのものではなく、未来について考えている自分です。この二つは、少し違います。</p>
+          <hr>
+          <p>人の頭は、とても親切です。危険がないか探してくれます。失敗しないように先回りしてくれます。「あれが起きたらどうする」「こうなったら困る」「もっと考えたほうがいい」と、次々に可能性を見せてくれます。</p>
+          <p>それはあなたを困らせるためではありません。あなたを守ろうとしているのかもしれません。ただ、とても働き者なので、もう十分考えたあとも、さらに考え続けることがあります。そのときは、頭の中で考え続けていることと、現実に問題が起き続けていることを、分けてみてもいいかもしれません。</p>
+          <p>問題が一つあって、それについて百回考えたとき、問題が百個になったわけではありません。一つの問題について、百回考えただけです。</p>
+          <hr>
+          <p>そして、ときどき悩みは、「どうすればいいか」という形をしていますが、少し奥には、「私はこれでいいのだろうか」という問いが隠れています。もしそうなら、行動の答えだけを探しても、なかなか安心できないことがあります。</p>
+          <p>なぜなら、どんな選択肢にも、「でも、本当にこれでいいのかな」と言うことができるからです。そんなときは、正解を探す代わりに、一つだけ違う問いを置いてみてもいいでしょう。「私は、何を大事にしたいのだろう。」</p>
+          <p>正しさではなく、大事にしたいもの。失いたくないもの。守りたいもの。味わいたいもの。これから少し増やしたいもの。それが分かれば、完璧な答えがなくても、次の一歩くらいは見えてくることがあります。</p>
+          <hr>
+          <p>それでも分からなければ、分からないままで構いません。「分からない」は、失敗ではありません。まだ決まっていない、という現在地です。霧の中にいるとき、遠くまで見ようとすると不安になります。</p>
+          <p>でも、歩くために必要なのは、何キロ先まで見えることではなく、次の一歩を置ける程度に見えることです。人生も、たぶん似ています。全部分かってから進む人はいません。進んだから分かることがあります。</p>
+          <p>選んだから分かることがあります。失敗したから分かることもあります。何もしなかったから分かることさえあります。理解は、いつも選択より先に来るわけではありません。</p>
+          <hr>
+          <p>もし今、「あのとき別の選択をしていれば」と思っていることがあるなら、そのときの自分を、今の知識だけで裁かなくてもいいでしょう。今のあなたが知っていることを、当時のあなたは知らなかったかもしれません。</p>
+          <p>今なら気づけることに、当時は気づけなかったかもしれません。そして、今それに気づいているということは、少なくとも、その経験はあなたの中で何かに変わり始めています。過去は変えられません。</p>
+          <p>でも、過去の意味は、これから変わることがあります。「あれは失敗だった」と思っていたものが、数年後、「あれがあったから変わった」になることがあります。だから今、過去の出来事に最終判決を出さなくてもいいのです。</p>
+          <p>まだ続きがあります。</p>
+          <hr>
+          <p>誰かの期待について悩んでいるなら、その人の気持ちは、その人の中にあります。あなたが全部引き受けることはできません。誰かを悲しませない人生。誰にも嫌われない人生。誰も失望させない人生。</p>
+          <p>もしそれを目指したら、選択肢はとても少なくなってしまいます。そして最後には、自分が自分を失望させるかもしれません。だから、誰かを大切にすることと、誰かの期待どおりに生きることは、同じではありません。</p>
+          <p>相手を大切にしながら、違う選択をすることもできます。</p>
+          <hr>
+          <p>今の自分に自信がないなら、自信がついてから動こうとしなくても大丈夫です。自信とは、「絶対にうまくいく」と思えることではなく、「うまくいかなかったら、そのときまた考えよう」</p>
+          <p>と思えることなのかもしれません。未来の自分を、少し信用してみる。困ったら考えるだろう。助けを求めるだろう。修正するだろう。逃げるべきなら逃げるだろう。休むべきなら休むだろう。</p>
+          <p>今の自分が、未来のすべての問題を解決しておく必要はありません。未来の問題の中には、未来の自分に任せていいものがあります。</p>
+          <hr>
+          <p>そして、もし悩んでいる自分そのものが嫌になっているなら、一つだけ覚えておいてください。悩んでいるということは、何かを大切にしているということでもあります。どうでもいいことなら、こんなに考えません。</p>
+          <p>だから、悩みをすぐに消そうとしなくてもいいのです。その奥にあるものを、少し見てみる。「私は何を守ろうとしているんだろう。」「本当は何を怖がっているんだろう。」「本当はどうなったら嬉しいんだろう。」</p>
+          <p>答えが出なくても構いません。問いを置くだけでもいい。</p>
+          <hr>
+          <p>ここまで読んで、まだ悩みが残っていても問題ありません。この文章の目的は、悩みをなくすことではありません。悩みがあることと、悩みに飲み込まれていることの間に、ほんの少し隙間をつくることです。</p>
+          <p>悩みは、あなたそのものではありません。今、あなたの中にあるものです。そして、あなたの中にあるものは、動きます。大きくなったり、小さくなったり、形を変えたりします。今日ものすごく大きく見えることが、数日後には少し違って見えることがあります。</p>
+          <hr>
+          <p>だから今は、人生全体を決めなくてもいい。完全な答えを出さなくてもいい。自分を完全に理解しなくてもいい。ただ、今の自分が知っていること。今の自分が感じていること。今の自分が大切にしたいこと。</p>
+          <p>そのくらいを材料にして、必要なら一つ選ぶ。選べないなら保留にする。選んだら少し生きてみる。違ったら選び直す。それでいいのだと思います。人生は、一度だけ回答できるテストではありません。</p>
+          <p>何度も書き換えられる途中の文章です。そして、今あなたが読んでいるこの瞬間も、まだ途中です。だから、結論を急がなくていい。まだ、続きがあります。</p>
+
+          <button class="reading-close button button-primary" type="button">四つのボタンに戻る</button>
+        </article>
   </main>
 
   <footer>© <span id="year"></span> 龍秘術®</footer>
   <script>
+    const readingButtons = [...document.querySelectorAll('.reading-button')];
+    const readingArticles = [...document.querySelectorAll('.reading-article')];
+    const readingContainer = document.querySelector('#reading .container');
+    readingArticles.forEach(article => readingContainer.append(article));
+    readingButtons.forEach((button, index) => {
+      button.addEventListener('click', () => {
+        readingArticles.forEach((article, articleIndex) => { article.hidden = articleIndex !== index; });
+        readingButtons.forEach((item, buttonIndex) => item.setAttribute('aria-expanded', String(buttonIndex === index)));
+        const title = readingArticles[index].querySelector('h3');
+        title.focus({ preventScroll: true });
+        title.scrollIntoView({ block: 'start' });
+      });
+      readingArticles[index].querySelector('.reading-close').addEventListener('click', () => {
+        readingArticles[index].hidden = true;
+        button.setAttribute('aria-expanded', 'false');
+        button.focus({ preventScroll: true });
+        document.querySelector('#reading').scrollIntoView({ block: 'start' });
+      });
+    });
     const menuButton = document.querySelector('.menu-button');
     const navLinks = document.querySelector('.nav-links');
     menuButton.addEventListener('click', () => {
