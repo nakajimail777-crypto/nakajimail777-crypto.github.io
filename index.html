@@ -56,12 +56,12 @@
     .nav-links a { text-decoration: none; font-size: clamp(.74rem, 1.22vw, .88rem); white-space: nowrap; }
     .nav-links a:hover { color: var(--gold-light); }
     .cta-swiper { overflow: hidden; touch-action: pan-y; user-select: none; }
-    .cta-swiper-track { display: flex; transition: transform .45s ease-out; }
-    .cta-slide { flex: 0 0 100%; text-align: center; white-space: nowrap; }
+    .cta-swiper-track { display: flex; width: 100%; transition: transform .45s ease-out; will-change: transform; }
+    .cta-slide { flex: 0 0 100%; min-width: 100%; text-align: center; white-space: nowrap; }
     .nav-swiper { flex: 0 0 clamp(148px, 18vw, 174px); width: clamp(148px, 18vw, 174px); border: 1px solid var(--gold-light); border-radius: 999px; }
     .nav-swiper .cta-slide { padding: 8px 12px; }
-    .hero-swiper, .fixed-swiper { width: min(300px, 100%); border-radius: 999px; }
-    .hero-swiper .cta-slide, .fixed-swiper .cta-slide { width: 100%; }
+    .hero-swiper, .fixed-swiper { width: min(300px, 100%); border-radius: 999px; background: var(--gold-light); }
+    .hero-swiper .cta-slide, .fixed-swiper .cta-slide { width: 100%; border-radius: 0; box-shadow: none; }
     .menu-button { display: none; border: 0; background: transparent; color: white; font-size: 1.5rem; cursor: pointer; }
 
     .hero {
@@ -241,6 +241,7 @@
       .section { padding: 72px 20px; }
       .flow { grid-template-columns: 1fr; }
       .button { width: 100%; }
+      .hero-swiper { width: 100%; }
       body { padding-bottom: 78px; }
       .fixed-cta { padding: 10px 16px; }
       .fixed-cta-inner { min-height: 58px; }
