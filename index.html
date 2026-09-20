@@ -44,18 +44,24 @@
       max-width: 1120px;
       min-height: 68px;
       margin: auto;
-      padding: 0 24px;
+      padding: 0 clamp(12px, 2vw, 24px);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 24px;
+      gap: clamp(10px, 1.5vw, 24px);
     }
-    .brand { text-decoration: none; letter-spacing: .18em; font-weight: 700; }
-    .brand small { margin-left: 8px; color: var(--gold-light); font-size: .7rem; }
-    .nav-links { display: flex; align-items: center; gap: 22px; }
-    .nav-links a { text-decoration: none; font-size: .86rem; }
+    .brand { flex: 0 0 auto; text-decoration: none; letter-spacing: .14em; font-size: clamp(.88rem, 1.5vw, 1.05rem); font-weight: 700; white-space: nowrap; }
+    .brand small { margin-left: 6px; color: var(--gold-light); font-size: .66rem; }
+    .nav-links { display: flex; align-items: center; gap: clamp(8px, 1.25vw, 18px); }
+    .nav-links a { text-decoration: none; font-size: clamp(.74rem, 1.22vw, .88rem); white-space: nowrap; }
     .nav-links a:hover { color: var(--gold-light); }
-    .nav-cta { padding: 8px 16px; border: 1px solid var(--gold-light); border-radius: 999px; }
+    .cta-swiper { overflow: hidden; touch-action: pan-y; user-select: none; }
+    .cta-swiper-track { display: flex; transition: transform .45s ease-out; }
+    .cta-slide { flex: 0 0 100%; text-align: center; white-space: nowrap; }
+    .nav-swiper { flex: 0 0 clamp(148px, 18vw, 174px); width: clamp(148px, 18vw, 174px); border: 1px solid var(--gold-light); border-radius: 999px; }
+    .nav-swiper .cta-slide { padding: 8px 12px; }
+    .hero-swiper, .fixed-swiper { width: min(300px, 100%); border-radius: 999px; }
+    .hero-swiper .cta-slide, .fixed-swiper .cta-slide { width: 100%; }
     .menu-button { display: none; border: 0; background: transparent; color: white; font-size: 1.5rem; cursor: pointer; }
 
     .hero {
@@ -176,9 +182,13 @@
     .profile-mark { aspect-ratio: 1; padding: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--paper-deep); color: var(--jade); font-size: clamp(1.25rem, 3vw, 1.65rem); font-weight: 700; line-height: 1.6; letter-spacing: .12em; text-align: center; }
 
     .faq { display: grid; gap: 12px; }
-    details { border-bottom: 1px solid var(--line); background: rgba(255,255,255,.52); }
-    summary { padding: 20px; cursor: pointer; color: var(--deep); font-weight: 700; }
-    details p { margin: 0; padding: 0 20px 22px; color: #536765; }
+    .faq details { border-bottom: 1px solid var(--line); background: rgba(255,255,255,.52); }
+    .faq summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px; cursor: pointer; color: var(--deep); font-weight: 700; list-style: none; }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary::after { content: '+'; color: var(--gold); font: 400 1.6rem/1 system-ui, sans-serif; transition: transform .45s ease-out; }
+    .faq details.is-open summary::after { transform: rotate(45deg); }
+    .faq-answer { overflow: hidden; }
+    .faq-answer p { margin: 0; padding: 0 20px 22px; color: #536765; }
 
     .contact {
       position: relative;
@@ -194,6 +204,20 @@
     .contact-note { margin-top: 16px !important; font-size: .78rem; }
 
     footer { padding: 28px 24px; background: #071b1c; color: rgba(255,255,255,.55); text-align: center; font: .78rem system-ui, sans-serif; }
+    body { padding-bottom: 88px; }
+    .fixed-cta {
+      position: fixed;
+      inset: auto 0 0;
+      z-index: 40;
+      padding: 12px 24px;
+      border-top: 1px solid rgba(223, 201, 145, .32);
+      background: rgba(7, 27, 28, .94);
+      color: var(--white);
+      box-shadow: 0 -12px 34px rgba(7, 27, 28, .2);
+      backdrop-filter: blur(14px);
+    }
+    .fixed-cta-inner { width: min(1040px, 100%); min-height: 56px; margin: auto; display: flex; align-items: center; justify-content: center; }
+    .fixed-cta a { min-height: 44px; padding: 8px 24px; }
     .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
     .reveal.visible { opacity: 1; transform: none; }
 
@@ -202,6 +226,7 @@
       .nav-links { position: absolute; inset: 68px 0 auto; display: none; flex-direction: column; align-items: stretch; padding: 16px 24px 24px; background: var(--deep); }
       .nav-links.open { display: flex; }
       .nav-links a { padding: 9px 0; }
+      .nav-swiper { width: 100%; }
       .about-grid, .profile, .price-wrap { grid-template-columns: 1fr; }
       .birth-fields { grid-template-columns: 1fr 1fr; }
       .calculate-button { grid-column: 1 / -1; }
@@ -216,6 +241,11 @@
       .section { padding: 72px 20px; }
       .flow { grid-template-columns: 1fr; }
       .button { width: 100%; }
+      body { padding-bottom: 78px; }
+      .fixed-cta { padding: 10px 16px; }
+      .fixed-cta-inner { min-height: 58px; }
+      .fixed-swiper { width: 100%; }
+      .fixed-cta a { width: 100%; }
     }
     @media (prefers-reduced-motion: reduce) {
       html { scroll-behavior: auto; }
@@ -244,7 +274,10 @@
       <a class="brand" href="#top">龍秘術®<small>RYUHIJUTSU</small></a>
       <button class="menu-button" type="button" aria-label="メニューを開く" aria-expanded="false">☰</button>
       <div class="nav-links">
-        <a href="#about">龍秘術®とは</a><a href="#flow">セッション</a><a href="#numbers">数字体験</a><a href="#price">料金</a><a href="#profile">プロフィール</a><a href="#faq">よくある質問</a><a class="nav-cta" href="#contact">予約・お問い合わせ</a>
+        <a href="#about">龍秘術®とは</a><a href="#flow">セッション</a><a href="#numbers">数字体験</a><a href="#price">料金</a><a href="#profile">プロフィール</a><a href="#faq">よくある質問</a>
+        <div class="cta-swiper nav-swiper" aria-label="おすすめメニュー">
+          <div class="cta-swiper-track"><a class="cta-slide" href="#contact">予約・お問い合わせ</a><a class="cta-slide" href="#numbers">数字体験を試す</a><a class="cta-slide" href="#reading">文章を読んでみる</a></div>
+        </div>
       </div>
     </nav>
   </header>
@@ -255,7 +288,7 @@
         <p class="eyebrow">数字・カード・対話からひらく</p>
         <h1>答えは、すでに<br>あなたの中にある。</h1>
         <p class="hero-copy">龍秘術®は、答えを決めるための占いではありません。数字とカードを手がかりに、対話を通して自分の気持ちに気づき、自分らしい次の一歩を見つけていくための時間です。</p>
-        <div class="actions"><a class="button button-primary" href="#contact">セッションを相談する</a><a class="button button-ghost" href="https://ryuhijutsu.com/" target="_blank" rel="noopener noreferrer">龍秘術®を知る（公式サイト）</a></div>
+        <div class="actions"><div class="cta-swiper hero-swiper" aria-label="おすすめメニュー"><div class="cta-swiper-track"><a class="button button-primary cta-slide" href="#contact">セッションを相談する</a><a class="button button-primary cta-slide" href="#numbers">数字体験を試す</a><a class="button button-primary cta-slide" href="#reading">今の自分に合う文章</a></div></div><a class="button button-ghost" href="https://ryuhijutsu.com/" target="_blank" rel="noopener noreferrer">龍秘術®を知る（公式サイト）</a></div>
       </div>
     </section>
 
@@ -347,10 +380,10 @@
       <div class="container">
         <div class="section-head reveal"><p class="kicker">FAQ</p><h2>よくある質問</h2></div>
         <div class="faq reveal">
-          <details><summary>占いとは違うのですか？</summary><p>未来を断定したり、答えを押しつけたりするものではありません。数字とカードをきっかけに、対話しながら自分の中の答えに気づく時間です。</p></details>
-          <details><summary>相談内容がまとまっていなくても大丈夫ですか？</summary><p>はい。うまく言葉にできない状態からでも大丈夫です。話せるところから、ゆっくり整理していきます。</p></details>
-          <details><summary>オンラインでも受けられますか？</summary><p>提供方法は現在準備中です。対面・オンラインの対応範囲が決まり次第、こちらに掲載します。</p></details>
-          <details><summary>個人情報はどのように扱われますか？</summary><p>セッションで伺った内容は慎重に扱い、本人の許可なく第三者へ共有しません。</p></details>
+          <details><summary>占いとは違うのですか？</summary><div class="faq-answer"><div><p>未来を断定したり、答えを押しつけたりするものではありません。数字とカードをきっかけに、対話しながら自分の中の答えに気づく時間です。</p></div></div></details>
+          <details><summary>相談内容がまとまっていなくても大丈夫ですか？</summary><div class="faq-answer"><div><p>はい。うまく言葉にできない状態からでも大丈夫です。話せるところから、ゆっくり整理していきます。</p></div></div></details>
+          <details><summary>オンラインでも受けられますか？</summary><div class="faq-answer"><div><p>提供方法は現在準備中です。対面・オンラインの対応範囲が決まり次第、こちらに掲載します。</p></div></div></details>
+          <details><summary>個人情報はどのように扱われますか？</summary><div class="faq-answer"><div><p>セッションで伺った内容は慎重に扱い、本人の許可なく第三者へ共有しません。</p></div></div></details>
         </div>
       </div>
     </section>
@@ -586,7 +619,41 @@
   </main>
 
   <footer>© <span id="year"></span> 龍秘術®</footer>
+  <aside class="fixed-cta" aria-label="予約・お問い合わせ">
+    <div class="fixed-cta-inner">
+      <div class="cta-swiper fixed-swiper" aria-label="おすすめメニュー"><div class="cta-swiper-track"><a class="button button-primary cta-slide" href="#contact">予約・お問い合わせ</a><a class="button button-primary cta-slide" href="#numbers">数字体験を試す</a><a class="button button-primary cta-slide" href="#reading">今の自分に合う文章</a></div></div>
+    </div>
+  </aside>
   <script>
+    document.querySelectorAll('.cta-swiper').forEach(swiper => {
+      const track = swiper.querySelector('.cta-swiper-track');
+      const slides = [...swiper.querySelectorAll('.cta-slide')];
+      let current = 0;
+      let startX = 0;
+      let dragged = false;
+      let timer;
+      const show = index => {
+        current = (index + slides.length) % slides.length;
+        track.style.transform = `translateX(-${current * 100}%)`;
+      };
+      const startAuto = () => {
+        clearInterval(timer);
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(() => show(current + 1), 4200);
+      };
+      swiper.addEventListener('pointerdown', event => { startX = event.clientX; dragged = false; });
+      swiper.addEventListener('pointermove', event => { if (Math.abs(event.clientX - startX) > 8) dragged = true; });
+      swiper.addEventListener('pointerup', event => {
+        const distance = event.clientX - startX;
+        if (Math.abs(distance) > 35) show(current + (distance < 0 ? 1 : -1));
+        startAuto();
+      });
+      swiper.addEventListener('click', event => { if (dragged) { event.preventDefault(); dragged = false; } }, true);
+      swiper.addEventListener('mouseenter', () => clearInterval(timer));
+      swiper.addEventListener('mouseleave', startAuto);
+      swiper.addEventListener('focusin', () => clearInterval(timer));
+      swiper.addEventListener('focusout', startAuto);
+      startAuto();
+    });
     const readingButtons = [...document.querySelectorAll('.reading-button')];
     const readingArticles = [...document.querySelectorAll('.reading-article')];
     const readingContainer = document.querySelector('#reading .container');
@@ -604,6 +671,33 @@
         button.setAttribute('aria-expanded', 'false');
         button.focus({ preventScroll: true });
         document.querySelector('#reading').scrollIntoView({ block: 'start' });
+      });
+    });
+    document.querySelectorAll('.faq details').forEach(detail => {
+      const summary = detail.querySelector('summary');
+      const answer = detail.querySelector('.faq-answer');
+      let expanded = detail.open;
+      let animation;
+      summary.addEventListener('click', event => {
+        event.preventDefault();
+        const start = detail.open ? answer.getBoundingClientRect().height : 0;
+        expanded = !expanded;
+        if (animation) animation.cancel();
+        detail.classList.toggle('is-open', expanded);
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          detail.open = expanded;
+          return;
+        }
+        detail.open = true;
+        const end = expanded ? answer.firstElementChild.getBoundingClientRect().height : 0;
+        const frames = [{ height: start + 'px' }, { height: end + 'px' }];
+        const current = answer.animate(frames, { duration: 450, easing: 'ease-out' });
+        animation = current;
+        current.onfinish = () => {
+          if (animation !== current) return;
+          detail.open = expanded;
+          animation = null;
+        };
       });
     });
     const menuButton = document.querySelector('.menu-button');
