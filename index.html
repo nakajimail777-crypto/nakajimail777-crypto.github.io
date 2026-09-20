@@ -111,6 +111,29 @@
     .button:hover { transform: translateY(-2px); }
     .button-primary { background: var(--gold-light); color: var(--deep); box-shadow: 0 12px 34px rgba(223,201,145,.18); }
     .button-ghost { border-color: rgba(255,255,255,.42); color: white; }
+    .hero .button-ghost { position: relative; overflow: hidden; }
+    .hero .button-ghost::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      padding: 2px;
+      border-radius: inherit;
+      background: conic-gradient(from var(--official-glow-angle), rgba(223,201,145,.28) 0deg 255deg, #fff3bd 285deg, #ffffff 315deg, #fff3bd 340deg, rgba(223,201,145,.28) 360deg) border-box;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: official-border-orbit 2.8s linear infinite;
+      pointer-events: none;
+    }
+    @property --official-glow-angle {
+      syntax: "<angle>";
+      initial-value: 0deg;
+      inherits: false;
+    }
+    @keyframes official-border-orbit {
+      to { --official-glow-angle: 360deg; }
+    }
+    .button-line { background: var(--gold-light); color: var(--deep); box-shadow: 0 12px 34px rgba(223,201,145,.18); cursor: pointer; }
 
     .section { padding: 96px 24px; }
     .section:nth-of-type(even) { background: var(--white); }
@@ -169,6 +192,13 @@
     .number-results { display: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 28px; }
     .number-results.visible { display: grid; }
     .number-result { min-height: 210px; padding: 28px 22px; display: grid; grid-template-rows: auto 1fr auto; align-items: center; border-top: 3px solid var(--gold); background: var(--paper); text-align: center; }
+    .number-results.visible .number-result { animation: number-result-in .7s cubic-bezier(.22, 1, .36, 1) both; }
+    .number-results.visible .number-result:nth-child(2) { animation-delay: .1s; }
+    .number-results.visible .number-result:nth-child(3) { animation-delay: .2s; }
+    @keyframes number-result-in {
+      from { opacity: 0; transform: translateY(24px) scale(.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
     .number-result small { display: block; color: var(--deep); font: 700 1.45rem "Yu Mincho", "Hiragino Mincho ProN", serif; letter-spacing: .18em; text-indent: .18em; }
     .number-result strong { display: grid; place-items: center; margin: 12px 0; color: var(--jade); font-size: 3.2rem; line-height: 1; }
     .number-result span { min-height: 1.6em; font-size: .92rem; color: #536765; }
@@ -218,6 +248,27 @@
     }
     .contact h2 { color: white; }
     .contact p { max-width: 620px; margin: 0 auto 26px; color: rgba(255,255,255,.75); }
+    .contact-actions { max-width: 320px; margin: 0 auto; flex-direction: column; }
+    .contact-actions .button { position: relative; width: 100%; overflow: hidden; box-shadow: 0 10px 26px rgba(223,201,145,.18); }
+    .contact-actions .button::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      padding: 2px;
+      border-radius: inherit;
+      background: linear-gradient(110deg, rgba(178,138,67,.35) 20%, #fff8d8 42%, #ffffff 50%, #fff8d8 58%, rgba(178,138,67,.35) 80%) border-box;
+      background-size: 280% 100%;
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: contact-border-sparkle 3.2s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .contact-actions .button:nth-child(2)::after { animation-delay: -1.6s; }
+    @keyframes contact-border-sparkle {
+      0%, 100% { background-position: 100% 50%; opacity: .45; }
+      50% { background-position: 0% 50%; opacity: 1; }
+    }
     .contact-note { margin-top: 16px !important; font-size: .78rem; }
 
     footer { padding: 28px 24px; background: #071b1c; color: rgba(255,255,255,.55); text-align: center; font: .78rem system-ui, sans-serif; }
@@ -281,7 +332,16 @@
     .reading-button:hover { background: var(--jade); transform: translateY(-2px); }
     .reading-button:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
     @media (max-width: 600px) { .reading-buttons { grid-template-columns: 1fr; } }
-    .reading-article { max-width: 720px; margin: 42px auto 0; padding: clamp(22px, 5vw, 48px); background: var(--white); border: 1px solid var(--line); border-radius: 20px; }
+    .reading-article { max-width: 720px; margin: 42px auto 0; padding: clamp(22px, 5vw, 48px); background: var(--white); border: 1px solid var(--line); border-radius: 20px; animation: reading-open .55s cubic-bezier(.22, 1, .36, 1) both; }
+    .reading-article.closing { animation: reading-close .42s cubic-bezier(.55, .06, .68, .19) both; pointer-events: none; }
+    @keyframes reading-open {
+      from { opacity: 0; transform: translateY(22px) scale(.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes reading-close {
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to { opacity: 0; transform: translateY(18px) scale(.985); }
+    }
     .reading-article[hidden] { display: none; }
     .reading-article h3 { font-size: 1.5rem; scroll-margin-top: 100px; }
     .reading-article p { margin: 0 0 1.35em; overflow-wrap: anywhere; }
@@ -413,9 +473,8 @@
     <section class="section" id="contact">
       <div class="container contact reveal">
         <p class="kicker">CONTACT</p><h2>話してみようかな、と思ったら</h2>
-        <p>ご質問だけでも大丈夫です。LINE・Instagram・予約フォームのリンクが決まり次第、ここからすぐに連絡できるようにします。</p>
-              <div class="actions" style="justify-content:center"><a class="button button-primary" href="https://www.instagram.com/isaisa0526?igsi=ZGg5OGlmY2xtaHJt">Instagramで相談する</a></div>
-        <p class="contact-note">※ 現在はモックのため、連絡先リンクは未設定です。</p>
+        <p>ご質問だけでも大丈夫です。LINEまたはInstagramから、お気軽にご連絡ください。</p>
+        <div class="actions contact-actions"><a class="button button-line" href="https://lin.ee/5E7hFPX">LINEで相談する</a><a class="button button-primary" href="https://www.instagram.com/isaisa0526?igsi=ZGg5OGlmY2xtaHJt">Instagramで相談する</a></div>
       </div>
     </section>
     <section class="section reading-section" id="reading">
@@ -682,6 +741,7 @@
     readingArticles.forEach(article => readingContainer.append(article));
     readingButtons.forEach((button, index) => {
       button.addEventListener('click', () => {
+        readingArticles[index].classList.remove('closing');
         readingArticles.forEach((article, articleIndex) => { article.hidden = articleIndex !== index; });
         readingButtons.forEach((item, buttonIndex) => item.setAttribute('aria-expanded', String(buttonIndex === index)));
         const title = readingArticles[index].querySelector('h3');
@@ -689,10 +749,22 @@
         title.scrollIntoView({ block: 'start' });
       });
       readingArticles[index].querySelector('.reading-close').addEventListener('click', () => {
-        readingArticles[index].hidden = true;
-        button.setAttribute('aria-expanded', 'false');
-        button.focus({ preventScroll: true });
-        document.querySelector('#reading').scrollIntoView({ block: 'start' });
+        const article = readingArticles[index];
+        article.classList.add('closing');
+        article.addEventListener('animationend', () => {
+          button.setAttribute('aria-expanded', 'false');
+          button.focus({ preventScroll: true });
+          let closed = false;
+          const finishClose = () => {
+            if (closed) return;
+            closed = true;
+            article.hidden = true;
+            article.classList.remove('closing');
+          };
+          window.addEventListener('scrollend', finishClose, { once: true });
+          document.querySelector('#reading').scrollIntoView({ behavior: 'smooth', block: 'start' });
+          window.setTimeout(finishClose, 1800);
+        }, { once: true });
       });
     });
     document.querySelectorAll('.faq details').forEach(detail => {
@@ -800,7 +872,10 @@
       document.querySelector('#allMeaning').textContent = numberMeanings[allResult] || '';
       document.querySelector('#dayMeaning').textContent = numberMeanings[dayResult] || '';
       document.querySelector('#monthDayMeaning').textContent = numberMeanings[monthDayResult] || '';
-      document.querySelector('#numberResults').classList.add('visible');
+      const numberResults = document.querySelector('#numberResults');
+      numberResults.classList.remove('visible');
+      void numberResults.offsetWidth;
+      numberResults.classList.add('visible');
     });
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
