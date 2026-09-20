@@ -54,7 +54,7 @@
       justify-content: space-between;
       gap: clamp(10px, 1.5vw, 24px);
     }
-    .brand { flex: 0 0 auto; text-decoration: none; letter-spacing: .14em; font-size: clamp(.88rem, 1.5vw, 1.05rem); font-weight: 700; white-space: nowrap; }
+    .brand { flex: 0 0 auto; text-decoration: none; letter-spacing: .14em; font-size: clamp(.88rem, 1.5vw, 1.05rem); font-weight: 700; white-space: nowrap; text-shadow: 0 0 6px rgba(223, 201, 145, .8), 0 0 14px rgba(223, 201, 145, .5); }
     .brand small { margin-left: 6px; color: var(--gold-light); font-size: .66rem; }
     .nav-links { display: flex; align-items: center; gap: clamp(8px, 1.25vw, 18px); }
     .nav-links a { text-decoration: none; font-size: clamp(.74rem, 1.22vw, .88rem); white-space: nowrap; }
@@ -117,7 +117,7 @@
     .container { width: min(1040px, 100%); min-width: 0; margin: auto; }
     .section-head { max-width: 720px; margin-bottom: 42px; }
     .kicker { margin: 0 0 8px; color: var(--gold); letter-spacing: .2em; font: 700 .75rem system-ui, sans-serif; }
-    h2 { margin: 0 0 16px; color: var(--deep); font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 500; line-height: 1.45; }
+    h2 { margin: 0 0 16px; color: var(--deep); font-size: clamp(1.6rem, 4vw, 3rem); font-weight: 500; line-height: 1.45; }
     h3 { margin: 0 0 10px; color: var(--deep); font-size: 1.2rem; }
     .lead { margin: 0; color: #48605e; }
 
@@ -134,6 +134,18 @@
       font-size: clamp(2rem, 7vw, 4rem);
       letter-spacing: .2em;
       text-indent: .2em;
+      animation: seal-float-glow 4.5s ease-in-out infinite;
+      will-change: transform, box-shadow;
+    }
+    @keyframes seal-float-glow {
+      0%, 100% {
+        transform: translateY(0);
+        box-shadow: 0 18px 42px rgba(13, 37, 39, .10), 0 0 12px rgba(223, 201, 145, .20);
+      }
+      50% {
+        transform: translateY(-6px);
+        box-shadow: 0 24px 48px rgba(13, 37, 39, .14), 0 0 32px rgba(223, 201, 145, .55);
+      }
     }
     .quote { margin: 28px 0 0; padding: 20px 24px; border-left: 3px solid var(--gold); background: rgba(178,138,67,.08); }
 
@@ -216,9 +228,9 @@
       z-index: 40;
       padding: 12px 24px;
       border-top: 1px solid rgba(223, 201, 145, .32);
-      background: rgba(7, 27, 28, .94);
+      background: rgba(12, 98, 103, 0.2);
       color: var(--white);
-      box-shadow: 0 -12px 34px rgba(7, 27, 28, .2);
+      box-shadow: 0 -12px 34px rgba(8, 169, 177, 0.2);
       backdrop-filter: blur(14px);
     }
     .fixed-cta-inner { width: min(1040px, 100%); min-height: 56px; margin: auto; display: flex; align-items: center; justify-content: center; }
@@ -227,6 +239,7 @@
     .reveal.visible { opacity: 1; transform: none; }
 
     @media (max-width: 800px) {
+      .nav { justify-content: flex-start; gap: 12px; }
       .menu-button { display: block; }
       .nav-links { position: absolute; inset: 68px 0 auto; display: none; flex-direction: column; align-items: stretch; padding: 16px 24px 24px; background: var(--deep); }
       .nav-links.open { display: flex; }
@@ -244,6 +257,7 @@
     }
     @media (max-width: 520px) {
       .hero { min-height: 650px; padding: 82px 20px 72px; }
+      .hero h1 { max-width: none; font-size: clamp(2.2rem, 5.15vw, 1.28rem); letter-spacing: .025em;}
       .section { padding: 72px 20px; }
       .flow { grid-template-columns: 1fr; }
       .hero-copy { max-width: 100%; overflow-wrap: anywhere; }
@@ -303,7 +317,7 @@
     <section class="section" id="about">
       <div class="container about-grid">
         <div class="reveal">
-          <p class="kicker">ABOUT</p><h2>自分を知り、選び直すための対話</h2>
+          <p class="kicker">ABOUT</p><h2>自分を知り<br>選び直すための対話</h2>
           <p class="lead">生年月日から導く数字、今の心を映すカード、そして丁寧な対話。三つを重ねながら、言葉にならなかった思いや、これから大切にしたい方向を一緒に見つけていきます。</p>
           <p class="quote">未来を決めつけるのではなく、いまの自分に必要な視点を受け取り、自分の意思で一歩を選ぶために。</p>
         </div>
