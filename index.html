@@ -86,9 +86,15 @@
       position: absolute;
       border: 1px solid rgba(223,201,145,.28);
       border-radius: 50%;
+      transform-origin: center;
+      animation: hero-circle-breathe 7s ease-in-out infinite;
     }
     .hero::before { width: 430px; height: 430px; right: -110px; top: 80px; }
-    .hero::after { width: 250px; height: 250px; right: -20px; top: 170px; }
+    .hero::after { width: 250px; height: 250px; right: -20px; top: 170px; animation-delay: -3.5s; }
+    @keyframes hero-circle-breathe {
+      0%, 100% { transform: scale(.96); opacity: .55; }
+      50% { transform: scale(1.06); opacity: 1; }
+    }
     .hero-inner { position: relative; z-index: 1; width: min(980px, 100%); min-width: 0; }
     .eyebrow { margin: 0 0 20px; color: var(--gold-light); letter-spacing: .28em; font-size: .78rem; }
     h1 { max-width: 760px; margin: 0; font-size: clamp(2.4rem, 7vw, 5.1rem); line-height: 1.35; font-weight: 500; letter-spacing: .06em; }
@@ -141,6 +147,23 @@
     .section-head { max-width: 720px; margin-bottom: 42px; }
     .kicker { margin: 0 0 8px; color: var(--gold); letter-spacing: .2em; font: 700 .75rem system-ui, sans-serif; }
     h2 { margin: 0 0 16px; color: var(--deep); font-size: clamp(1.6rem, 4vw, 3rem); font-weight: 500; line-height: 1.45; }
+    .section h2::after {
+      content: "";
+      display: block;
+      width: 68px;
+      height: 2px;
+      margin-top: 14px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-light));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .9s cubic-bezier(.22, 1, .36, 1);
+    }
+    .section .reveal.visible h2::after, .reading-section .section-head h2::after { transform: scaleX(1); }
+    .section-head h2::after, .contact h2::after { margin-inline: auto; transform-origin: center; }
+    .heading-phrase { display: inline-block; }
+    @media (max-width: 520px) {
+      h2.heading-grouped { font-size: clamp(1.2rem, 5.8vw, 1.6rem); }
+    }
     h3 { margin: 0 0 10px; color: var(--deep); font-size: 1.2rem; }
     .lead { margin: 0; color: #48605e; }
 
@@ -187,6 +210,7 @@
     .birth-field label { display: block; margin-bottom: 6px; color: var(--jade); font: 700 .82rem system-ui, sans-serif; }
     .birth-field input, .birth-field select { width: 100%; min-height: 48px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--ink); font-size: 1rem; }
     .calculate-button { min-height: 48px; padding: 10px 24px; border: 0; border-radius: 10px; background: var(--jade); color: white; font-weight: 700; cursor: pointer; }
+    .calculate-button { transition: transform .16s ease-out, background .2s ease; }
     .calculate-button:hover { background: var(--deep); }
     .number-error { margin: 16px 0 0; color: #9b3c34; font-weight: 700; }
     .number-results { display: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 28px; }
@@ -330,6 +354,9 @@
     .reading-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; max-width: 840px; margin: auto; }
     .reading-button { min-height: 88px; padding: 22px 18px; border: 1px solid var(--gold); border-radius: 16px; background: var(--deep); color: var(--gold-light); font: inherit; font-size: 1.05rem; cursor: pointer; transition: background .2s, transform .2s; }
     .reading-button:hover { background: var(--jade); transform: translateY(-2px); }
+    .button:active, .calculate-button:active, .reading-button:active {
+      transform: translateY(2px) scale(.97);
+    }
     .reading-button:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
     @media (max-width: 600px) { .reading-buttons { grid-template-columns: 1fr; } }
     .reading-article { max-width: 720px; margin: 42px auto 0; padding: clamp(22px, 5vw, 48px); background: var(--white); border: 1px solid var(--line); border-radius: 20px; animation: reading-open .55s cubic-bezier(.22, 1, .36, 1) both; }
@@ -348,6 +375,19 @@
     .reading-article hr { width: 64px; margin: 40px auto; border: 0; border-top: 1px solid var(--gold); }
     .reading-button[aria-expanded="true"] { background: var(--jade); box-shadow: 0 0 0 2px var(--gold); }
     .reading-close { font: inherit; cursor: pointer; }
+    .back-to-top {
+      position: fixed; right: 16px; bottom: calc(var(--fixed-cta-height, 78px) + 14px);
+      z-index: 41; width: 46px; height: 46px; padding: 0;
+      display: grid; place-items: center; border: 1px solid rgba(223,201,145,.5);
+      border-radius: 50%; background: rgba(13,37,39,.4); color: var(--gold-light);
+      font: 24px system-ui, sans-serif; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(13,37,39,.08);
+      opacity: 0; visibility: hidden; transform: translateY(8px);
+      transition: opacity .25s ease-out, transform .25s ease-out, visibility .25s;
+    }
+    .back-to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
+    .back-to-top:active { transform: translateY(2px) scale(.95); }
+    .back-to-top:focus-visible { outline: 3px solid var(--gold-light); outline-offset: 4px; }
   </style>
 </head>
 <body>
@@ -377,7 +417,7 @@
     <section class="section" id="about">
       <div class="container about-grid">
         <div class="reveal">
-          <p class="kicker">ABOUT</p><h2>自分を知り<br>選び直すための対話</h2>
+          <p class="kicker">ABOUT</p><h2 class="heading-grouped"><span class="heading-phrase">自分を知り</span><br><span class="heading-phrase">選び直すための対話</span></h2>
           <p class="lead">生年月日から導く数字、今の心を映すカード、そして丁寧な対話。三つを重ねながら、言葉にならなかった思いや、これから大切にしたい方向を一緒に見つけていきます。</p>
           <p class="quote">未来を決めつけるのではなく、いまの自分に必要な視点を受け取り、自分の意思で一歩を選ぶために。</p>
         </div>
@@ -411,7 +451,7 @@
 
     <section class="section" id="numbers">
       <div class="container">
-        <div class="section-head reveal"><p class="kicker">NUMBER EXPERIENCE</p><h2>あなたの数字を出してみる</h2><p class="lead">生年月日から、3つの計算結果を表示します。</p></div>
+        <div class="section-head reveal"><p class="kicker">NUMBER EXPERIENCE</p><h2 class="heading-grouped"><span class="heading-phrase">あなたの数字を</span><span class="heading-phrase">出してみる</span></h2><p class="lead">生年月日から、3つの計算結果を表示します。</p></div>
         <div class="number-tool reveal">
           <div class="birth-fields">
             <div class="birth-field"><label for="birthYear">年（西暦）</label><input id="birthYear" type="number" inputmode="numeric" min="1900" max="2100" placeholder="例：2026"></div>
@@ -472,14 +512,14 @@
 
     <section class="section" id="contact">
       <div class="container contact reveal">
-        <p class="kicker">CONTACT</p><h2>話してみようかな、と思ったら</h2>
+        <p class="kicker">CONTACT</p><h2 class="heading-grouped"><span class="heading-phrase">話してみようかな、</span><span class="heading-phrase">と思ったら</span></h2>
         <p>ご質問だけでも大丈夫です。LINEまたはInstagramから、お気軽にご連絡ください。</p>
         <div class="actions contact-actions"><a class="button button-line" href="https://lin.ee/5E7hFPX">LINEで相談する</a><a class="button button-primary" href="https://www.instagram.com/isaisa0526?igsi=ZGg5OGlmY2xtaHJt">Instagramで相談する</a></div>
       </div>
     </section>
     <section class="section reading-section" id="reading">
       <div class="container">
-        <div class="section-head"><p class="kicker">READING</p><h2>今のあなたに近いものを<br>選んでください</h2></div>
+        <div class="section-head"><p class="kicker">READING</p><h2 class="heading-grouped"><span class="heading-phrase">今のあなたに近いものを</span><br><span class="heading-phrase">選んでください</span></h2></div>
         <div class="reading-buttons" aria-label="今の気持ちから選ぶ">
           <button class="reading-button" type="button" aria-expanded="false" aria-controls="reading-article-0">決められないとき</button>
           <button class="reading-button" type="button" aria-expanded="false" aria-controls="reading-article-1">過去を後悔しているとき</button>
@@ -705,7 +745,28 @@
       <div class="cta-swiper fixed-swiper" aria-label="おすすめメニュー"><div class="cta-swiper-track"><a class="button button-primary cta-slide" href="#contact">予約・お問い合わせ</a><a class="button button-primary cta-slide" href="#numbers">数字体験を試す</a><a class="button button-primary cta-slide" href="#reading">今の自分に合う文章</a></div></div>
     </div>
   </aside>
+  <button class="back-to-top" type="button" aria-label="ページの先頭へ戻る" tabindex="-1" aria-hidden="true">↑</button>
   <script>
+    const backToTop = document.querySelector('.back-to-top');
+    const fixedCta = document.querySelector('.fixed-cta');
+    new ResizeObserver(() => {
+      backToTop.style.setProperty('--fixed-cta-height', `${fixedCta.getBoundingClientRect().height}px`);
+    }).observe(fixedCta);
+    const updateBackToTop = () => {
+      const visible = window.scrollY > window.innerHeight * .75;
+      backToTop.classList.toggle('is-visible', visible);
+      backToTop.tabIndex = visible ? 0 : -1;
+      backToTop.setAttribute('aria-hidden', String(!visible));
+    };
+    window.addEventListener('scroll', updateBackToTop, { passive: true });
+    window.addEventListener('resize', updateBackToTop);
+    updateBackToTop();
+    backToTop.addEventListener('click', () => {
+      const heading = document.querySelector('#top h1');
+      heading.setAttribute('tabindex', '-1');
+      heading.focus({ preventScroll: true });
+      window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+    });
     document.querySelectorAll('.cta-swiper').forEach(swiper => {
       const track = swiper.querySelector('.cta-swiper-track');
       const slides = [...swiper.querySelectorAll('.cta-slide')];
