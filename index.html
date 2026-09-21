@@ -502,6 +502,7 @@
             <div class="number-result"><small>龍性</small><button class="number-detail-trigger" type="button" data-number-id="allNumber" aria-haspopup="dialog" aria-controls="number-detail-dialog" aria-label="龍性の数字の説明を読む"><strong id="allNumber">—</strong></button><span id="allMeaning"></span></div>
             <div class="number-result"><small>龍導</small><button class="number-detail-trigger" type="button" data-number-id="dayNumber" aria-haspopup="dialog" aria-controls="number-detail-dialog" aria-label="龍導の数字の説明を読む"><strong id="dayNumber">—</strong></button><span id="dayMeaning"></span></div>
             <div class="number-result"><small>龍望</small><button class="number-detail-trigger" type="button" data-number-id="monthDayNumber" aria-haspopup="dialog" aria-controls="number-detail-dialog" aria-label="龍望の数字の説明を読む"><strong id="monthDayNumber">—</strong></button><span id="monthDayMeaning"></span></div>
+            <a class="button button-primary number-dragon-link" style="grid-column: 1 / -1; justify-self: center; max-width: 100%; white-space: normal; text-align: center;" href="https://ai-bot-beta-one.vercel.app/" target="_blank" rel="noopener noreferrer">スピリットドラゴンに聞いてみる</a>
           </div>
           <p class="number-note">表示は簡易体験です。</p>
         </div>
@@ -837,9 +838,9 @@
         <p id="number-detail-summary"></p>
         <p>数字それぞれの特徴や、3つの組み合わせから見えてくるものは、スピリットドラゴンとの対話、または龍秘術セッションで、さらに深めることができます。</p>
       </div>
-      <p>スピリットドラゴンに聞くときは、上の3つの数字を伝えてみてください。</p>
+      <p>スピリットドラゴンに聞くときは、龍性・龍導の2つの数字が自動で入力されます。送信して会話を始められます。</p>
       <div class="number-detail-actions">
-        <a class="button button-primary" href="https://ai-bot-beta-one.vercel.app/" target="_blank" rel="noopener noreferrer">スピリットドラゴンに聞いてみる</a>
+        <a class="button button-primary number-dragon-link" href="https://ai-bot-beta-one.vercel.app/" target="_blank" rel="noopener noreferrer">スピリットドラゴンに聞いてみる</a>
         <a class="button button-primary" href="https://lin.ee/5E7hFPX" target="_blank" rel="noopener noreferrer">龍秘術セッションについて相談する</a>
         <button class="button number-detail-close" type="button">閉じる</button>
       </div>
@@ -1083,6 +1084,10 @@
       numberResults.classList.remove('visible');
       void numberResults.offsetWidth;
       numberResults.classList.add('visible');
+      const dragonUrl = new URL('https://ai-bot-beta-one.vercel.app/');
+      dragonUrl.searchParams.set('ryusei', String(allResult));
+      dragonUrl.searchParams.set('ryudo', String(dayResult));
+      document.querySelectorAll('.number-dragon-link').forEach(link => { link.href = dragonUrl.href; });
       document.querySelector('#allNumber').textContent = allResult;
       document.querySelector('#dayNumber').textContent = dayResult;
       document.querySelector('#monthDayNumber').textContent = monthDayResult;
