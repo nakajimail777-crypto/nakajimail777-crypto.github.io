@@ -225,6 +225,16 @@
     }
     .number-result small { display: block; color: var(--deep); font: 700 1.45rem "Yu Mincho", "Hiragino Mincho ProN", serif; letter-spacing: .18em; text-indent: .18em; }
     .number-result strong { display: grid; place-items: center; margin: 12px 0; color: var(--jade); font-size: 3.2rem; line-height: 1; }
+    .number-results.visible .number-result strong {
+      -webkit-text-stroke: .5px rgba(178,138,67,.35);
+      animation: number-edge-shimmer 3.6s ease-in-out infinite;
+    }
+    .number-result:nth-child(2) strong { animation-delay: -.9s !important; }
+    .number-result:nth-child(3) strong { animation-delay: -1.8s !important; }
+    @keyframes number-edge-shimmer {
+      0%, 70%, 100% { -webkit-text-stroke-color: rgba(178,138,67,.35); text-shadow: 0 0 2px rgba(223,201,145,.15); }
+      35% { -webkit-text-stroke-color: #f4d994; text-shadow: 0 0 4px rgba(223,201,145,.75), 0 0 9px rgba(223,201,145,.35); }
+    }
     .number-result span { min-height: 1.6em; font-size: .92rem; color: #536765; }
     .number-note { margin: 18px 0 0; color: #667876; font-size: .82rem; }
 
@@ -388,6 +398,28 @@
     .back-to-top.is-visible { opacity: 1; visibility: visible; transform: translateY(0); }
     .back-to-top:active { transform: translateY(2px) scale(.95); }
     .back-to-top:focus-visible { outline: 3px solid var(--gold-light); outline-offset: 4px; }
+    .reading-invitation { margin: 40px 0 24px; padding: clamp(18px, 4vw, 28px); border: 1px solid var(--line); border-radius: 16px; background: var(--paper); text-align: center; }
+    .reading-invitation h4 { margin: 0 0 16px; color: var(--deep); font-size: 1.15rem; line-height: 1.7; }
+    .reading-invitation .button { max-width: 100%; white-space: normal; font-size: .9rem; }
+    .reading-invitation .reading-invitation-note { margin: 16px 0 0; color: #536765; font-size: .85rem; }
+    .consultation-card { position: relative; }
+    .consultation-trigger { border: 0; padding: 0; background: transparent; color: var(--jade); font: inherit; font-size: .88rem; cursor: pointer; }
+    .consultation-trigger::after { content: ""; position: absolute; inset: 0; border-radius: 18px; }
+    .consultation-trigger:focus-visible::after { outline: 3px solid var(--gold); outline-offset: 4px; }
+    .consultation-dialog { width: min(640px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 1px solid var(--gold-light); border-radius: 22px; background: var(--white); color: var(--ink); overflow: auto; overscroll-behavior: contain; }
+    .consultation-dialog::backdrop { background: rgba(7,27,28,.68); backdrop-filter: blur(5px); }
+    .consultation-dialog[open] { animation: consultation-expand .35s ease-out both; }
+    @keyframes consultation-expand { from { opacity: 0; transform: translateY(18px) scale(.92); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .consultation-dialog-header { position: sticky; top: 0; display: flex; justify-content: space-between; align-items: center; padding: 12px 22px; background: var(--white); border-bottom: 1px solid var(--line); z-index: 1; }
+    .consultation-dialog-header .kicker { margin: 0; }
+    .consultation-dismiss { width: 44px; height: 44px; border: 1px solid var(--line); border-radius: 50%; background: var(--paper); color: var(--deep); font-size: 26px; cursor: pointer; }
+    .consultation-dialog-body { padding: clamp(22px, 5vw, 40px); }
+    .consultation-dialog h2 { font-size: clamp(1.5rem, 5.5vw, 2rem); }
+    .consultation-examples { padding-left: 1.3em; }
+    .consultation-examples li { margin-bottom: 18px; }
+    .consultation-examples strong { display: block; color: var(--jade); }
+    .consultation-conversation { padding: 20px; border-left: 2px solid var(--gold); background: var(--paper); }
+    .consultation-dialog .button { margin-top: 18px; }
   </style>
 </head>
 <body>
@@ -429,7 +461,7 @@
       <div class="container">
         <div class="section-head reveal"><p class="kicker">FOR YOU</p><h2>こんなときに</h2><p class="lead">うまく説明できなくても大丈夫です。いま感じていることから、ゆっくり始めます。</p></div>
         <div class="cards">
-          <article class="card reveal"><span class="card-number">01</span><h3>選択に迷っている</h3><p>仕事、人間関係、これからの暮らし。考えても答えがまとまらないときに。</p></article>
+          <article class="card reveal consultation-card"><span class="card-number">01</span><h3>選択に迷っている</h3><p>仕事、人間関係、これからの暮らし。考えても答えがまとまらないときに。</p><button class="consultation-trigger" type="button" aria-haspopup="dialog" aria-controls="consultation-dialog">相談のイメージを見る ＋</button></article>
           <article class="card reveal"><span class="card-number">02</span><h3>本音を知りたい</h3><p>周りを優先しすぎて、自分が本当はどうしたいのか分からなくなったときに。</p></article>
           <article class="card reveal"><span class="card-number">03</span><h3>一歩を踏み出したい</h3><p>変わりたい気持ちはあるのに、怖さや不安で動けないと感じるときに。</p></article>
         </div>
@@ -573,6 +605,12 @@
           <p>出なければ、もう少し待つ。</p>
           <p>どちらでも大丈夫です。</p>
           <p>あなたは今、まだ途中にいます。</p>
+          <aside class="reading-invitation" aria-label="セッションのご相談">
+            <h4>この気持ちを、少し話してみませんか？</h4>
+            <p>読んでいて心に残ったことから、ゆっくりお話しできます。うまく言葉にできなくても大丈夫です。</p>
+            <a class="button button-primary" href="https://lin.ee/5E7hFPX">LINEでセッションについて聞く</a>
+            <p class="reading-invitation-note">「セッションについて知りたい」の一言で大丈夫です。ご質問だけでも、お気軽にどうぞ。</p>
+          </aside>
           <button class="reading-close button button-primary" type="button">戻る</button>
         </article>
         <article class="reading-article" id="reading-article-1" hidden aria-labelledby="reading-title-1">
@@ -625,6 +663,12 @@
           <p>少し違う選択をできるなら、</p>
           <p>その過去はもう、</p>
           <p>ただの失敗ではないのかもしれません。</p>
+          <aside class="reading-invitation" aria-label="セッションのご相談">
+            <h4>この気持ちを、少し話してみませんか？</h4>
+            <p>読んでいて心に残ったことから、ゆっくりお話しできます。うまく言葉にできなくても大丈夫です。</p>
+            <a class="button button-primary" href="https://lin.ee/5E7hFPX">LINEでセッションについて聞く</a>
+            <p class="reading-invitation-note">「セッションについて知りたい」の一言で大丈夫です。ご質問だけでも、お気軽にどうぞ。</p>
+          </aside>
           <button class="reading-close button button-primary" type="button">戻る</button>
         </article>
         <article class="reading-article" id="reading-article-2" hidden aria-labelledby="reading-title-2">
@@ -683,6 +727,12 @@
           <p>人の声を聞きながら、</p>
           <p>最後の一票だけは、</p>
           <p>自分に残しておいてください。</p>
+          <aside class="reading-invitation" aria-label="セッションのご相談">
+            <h4>この気持ちを、少し話してみませんか？</h4>
+            <p>読んでいて心に残ったことから、ゆっくりお話しできます。うまく言葉にできなくても大丈夫です。</p>
+            <a class="button button-primary" href="https://lin.ee/5E7hFPX">LINEでセッションについて聞く</a>
+            <p class="reading-invitation-note">「セッションについて知りたい」の一言で大丈夫です。ご質問だけでも、お気軽にどうぞ。</p>
+          </aside>
           <button class="reading-close button button-primary" type="button">戻る</button>
         </article>
         <article class="reading-article" id="reading-article-3" hidden aria-labelledby="reading-title-3">
@@ -735,6 +785,12 @@
           <p>そのくらいを材料にして、必要なら一つ選ぶ。選べないなら保留にする。選んだら少し生きてみる。違ったら選び直す。それでいいのだと思います。人生は、一度だけ回答できるテストではありません。</p>
           <p>何度も書き換えられる途中の文章です。そして、今あなたが読んでいるこの瞬間も、まだ途中です。だから、結論を急がなくていい。まだ、続きがあります。</p>
 
+          <aside class="reading-invitation" aria-label="セッションのご相談">
+            <h4>この気持ちを、少し話してみませんか？</h4>
+            <p>読んでいて心に残ったことから、ゆっくりお話しできます。うまく言葉にできなくても大丈夫です。</p>
+            <a class="button button-primary" href="https://lin.ee/5E7hFPX">LINEでセッションについて聞く</a>
+            <p class="reading-invitation-note">「セッションについて知りたい」の一言で大丈夫です。ご質問だけでも、お気軽にどうぞ。</p>
+          </aside>
           <button class="reading-close button button-primary" type="button">戻る</button>
         </article>
   </main>
@@ -746,7 +802,45 @@
     </div>
   </aside>
   <button class="back-to-top" type="button" aria-label="ページの先頭へ戻る" tabindex="-1" aria-hidden="true">↑</button>
+  <dialog class="consultation-dialog" id="consultation-dialog" aria-labelledby="consultation-title">
+    <div class="consultation-dialog-header"><p class="kicker">FOR YOU · 01</p><button class="consultation-dismiss" type="button" aria-label="閉じる" autofocus>×</button></div>
+    <div class="consultation-dialog-body">
+      <h2 id="consultation-title">こんな話から始めて大丈夫です</h2>
+      <p>相談したいことが、まだまとまっていなくても構いません。いま感じていることから、ゆっくりお話しできます。</p>
+      <ul class="consultation-examples">
+        <li><strong>仕事のこと</strong>「辞めたい気もするけど、何が嫌なのか自分でも分からない」</li>
+        <li><strong>人間関係のこと</strong>「相手に合わせてばかりで、自分がどうしたいのか分からなくなった」</li>
+        <li><strong>決められないこと</strong>「やりたいことはあるけど、失敗が怖くて動けない」</li>
+        <li><strong>なんとなくの気持ち</strong>「大きな問題はないのに、どこか満たされない」</li>
+      </ul>
+      <h3>例えば、こんな対話から</h3>
+      <div class="consultation-conversation"><p>「仕事を辞めたほうがいいですか？」</p><p>「どんな場面で、いちばん疲れますか？」<br>「逆に、続けたいと思う部分はありますか？」</p></div>
+      <p>これは会話の一例です。数字やカードを手がかりに、感じたことを一緒に言葉にしていきます。</p>
+      <p>答えを決めつけるのではなく、まだ言葉にならない気持ちも話せる時間を大切にしています。</p>
+      <button class="button button-primary consultation-return" type="button">閉じて戻る</button>
+    </div>
+  </dialog>
   <script>
+    const consultationDialog = document.querySelector('#consultation-dialog');
+    const consultationTrigger = document.querySelector('.consultation-trigger');
+    let consultationScrollStyle = '';
+    consultationTrigger.addEventListener('click', () => {
+      consultationScrollStyle = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = 'hidden';
+      consultationDialog.showModal();
+      consultationDialog.scrollTop = 0;
+    });
+    consultationDialog.querySelectorAll('.consultation-dismiss, .consultation-return').forEach(button => {
+      button.addEventListener('click', () => consultationDialog.close());
+    });
+    consultationDialog.addEventListener('click', event => {
+      const bounds = consultationDialog.getBoundingClientRect();
+      if (event.target === consultationDialog && (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom)) consultationDialog.close();
+    });
+    consultationDialog.addEventListener('close', () => {
+      document.documentElement.style.overflow = consultationScrollStyle;
+      consultationTrigger.focus({ preventScroll: true });
+    });
     const backToTop = document.querySelector('.back-to-top');
     const fixedCta = document.querySelector('.fixed-cta');
     new ResizeObserver(() => {
@@ -927,16 +1021,16 @@
       const dayResult = day === 11 || day === 22 ? day : reduceNumber([...String(day)].reduce((sum, digit) => sum + Number(digit), 0));
       const monthDayRaw = [...`${month}${day}`].reduce((sum, digit) => sum + Number(digit), 0);
       const monthDayResult = reduceToSingleDigit(monthDayRaw);
+      const numberResults = document.querySelector('#numberResults');
+      numberResults.classList.remove('visible');
+      void numberResults.offsetWidth;
+      numberResults.classList.add('visible');
       document.querySelector('#allNumber').textContent = allResult;
       document.querySelector('#dayNumber').textContent = dayResult;
       document.querySelector('#monthDayNumber').textContent = monthDayResult;
       document.querySelector('#allMeaning').textContent = numberMeanings[allResult] || '';
       document.querySelector('#dayMeaning').textContent = numberMeanings[dayResult] || '';
       document.querySelector('#monthDayMeaning').textContent = numberMeanings[monthDayResult] || '';
-      const numberResults = document.querySelector('#numberResults');
-      numberResults.classList.remove('visible');
-      void numberResults.offsetWidth;
-      numberResults.classList.add('visible');
     });
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
