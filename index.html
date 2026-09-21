@@ -420,6 +420,12 @@
     .consultation-examples strong { display: block; color: var(--jade); }
     .consultation-conversation { padding: 20px; border-left: 2px solid var(--gold); background: var(--paper); }
     .consultation-dialog .button { margin-top: 18px; }
+    .number-detail-trigger { display: block; width: 100%; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; border-radius: 12px; }
+    .number-detail-trigger:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    .number-detail-trigger:active { transform: scale(.97); }
+    .number-detail-value { display: block; margin: 20px 0; color: var(--jade); font-size: 3.2rem; text-align: center; }
+    .number-detail-actions { display: flex; flex-direction: column; gap: 12px; }
+    .number-detail-actions .button { margin-top: 0; white-space: normal; text-align: center; font-size: .9rem; }
   </style>
 </head>
 <body>
@@ -493,9 +499,9 @@
           </div>
           <p class="number-error" id="numberError" role="alert"></p>
           <div class="number-results" id="numberResults" aria-live="polite">
-            <div class="number-result"><small>龍性</small><strong id="allNumber">—</strong><span id="allMeaning"></span></div>
-            <div class="number-result"><small>龍導</small><strong id="dayNumber">—</strong><span id="dayMeaning"></span></div>
-            <div class="number-result"><small>龍望</small><strong id="monthDayNumber">—</strong><span id="monthDayMeaning"></span></div>
+            <div class="number-result"><small>龍性</small><button class="number-detail-trigger" type="button" data-number-id="allNumber" aria-haspopup="dialog" aria-controls="number-detail-dialog" aria-label="龍性の数字の説明を読む"><strong id="allNumber">—</strong></button><span id="allMeaning"></span></div>
+            <div class="number-result"><small>龍導</small><button class="number-detail-trigger" type="button" data-number-id="dayNumber" aria-haspopup="dialog" aria-controls="number-detail-dialog" aria-label="龍導の数字の説明を読む"><strong id="dayNumber">—</strong></button><span id="dayMeaning"></span></div>
+            <div class="number-result"><small>龍望</small><button class="number-detail-trigger" type="button" data-number-id="monthDayNumber" aria-haspopup="dialog" aria-controls="number-detail-dialog" aria-label="龍望の数字の説明を読む"><strong id="monthDayNumber">—</strong></button><span id="monthDayMeaning"></span></div>
           </div>
           <p class="number-note">表示は簡易体験です。</p>
         </div>
@@ -817,10 +823,62 @@
       <div class="consultation-conversation"><p>「仕事を辞めたほうがいいですか？」</p><p>「どんな場面で、いちばん疲れますか？」<br>「逆に、続けたいと思う部分はありますか？」</p></div>
       <p>これは会話の一例です。数字やカードを手がかりに、感じたことを一緒に言葉にしていきます。</p>
       <p>答えを決めつけるのではなく、まだ言葉にならない気持ちも話せる時間を大切にしています。</p>
-      <button class="button button-primary consultation-return" type="button">閉じて戻る</button>
+      <button class="button button-primary consultation-return" type="button">閉じる</button>
+    </div>
+  </dialog>
+  <dialog class="consultation-dialog" id="number-detail-dialog" aria-labelledby="number-detail-title">
+    <div class="consultation-dialog-header"><p class="kicker">YOUR NUMBERS</p><button class="consultation-dismiss" type="button" aria-label="数字の説明を閉じる" autofocus>×</button></div>
+    <div class="consultation-dialog-body">
+      <h2 id="number-detail-title"></h2>
+      <strong class="number-detail-value" id="number-detail-value"></strong>
+      <p id="number-detail-description"></p>
+      <div class="consultation-conversation">
+        <h3>この数字には、どんな意味があるのでしょう？</h3>
+        <p id="number-detail-summary"></p>
+        <p>数字それぞれの特徴や、3つの組み合わせから見えてくるものは、スピリットドラゴンとの対話、または龍秘術セッションで、さらに深めることができます。</p>
+      </div>
+      <p>スピリットドラゴンに聞くときは、上の3つの数字を伝えてみてください。</p>
+      <div class="number-detail-actions">
+        <a class="button button-primary" href="https://ai-bot-beta-one.vercel.app/" target="_blank" rel="noopener noreferrer">スピリットドラゴンに聞いてみる</a>
+        <a class="button button-primary" href="https://lin.ee/5E7hFPX" target="_blank" rel="noopener noreferrer">龍秘術セッションについて相談する</a>
+        <button class="button number-detail-close" type="button">閉じる</button>
+      </div>
     </div>
   </dialog>
   <script>
+    const numberDetailDialog = document.querySelector('#number-detail-dialog');
+    const numberDetailContent = {
+      allNumber: { title: '龍性', description: '自分の内側にある才能。感受性や発想力など、その人が内側に持っている性質を表します。' },
+      dayNumber: { title: '龍導', description: '外の世界に向かうときの才能。どこに着眼するか、どのように行動するかといった、その人らしい行動スタイルを表します。' },
+      monthDayNumber: { title: '龍望', description: 'あなたの天命を表します。' }
+    };
+    let numberDetailOpener;
+    let numberDetailOverflow = '';
+    document.querySelectorAll('.number-detail-trigger').forEach(button => {
+      button.addEventListener('click', () => {
+        const info = numberDetailContent[button.dataset.numberId];
+        const value = document.getElementById(button.dataset.numberId).textContent;
+        if (value === '—') return;
+        document.querySelector('#number-detail-title').textContent = info.title + 'について';
+        document.querySelector('#number-detail-value').textContent = value;
+        document.querySelector('#number-detail-description').textContent = info.description;
+        document.querySelector('#number-detail-summary').textContent = 'あなたの数字は、' + Object.entries(numberDetailContent).map(([id, item]) => item.title + ' ' + document.getElementById(id).textContent).join('・') + 'です。';
+        numberDetailOpener = button;
+        numberDetailOverflow = document.documentElement.style.overflow;
+        document.documentElement.style.overflow = 'hidden';
+        numberDetailDialog.showModal();
+        numberDetailDialog.scrollTop = 0;
+      });
+    });
+    numberDetailDialog.querySelectorAll('.consultation-dismiss, .number-detail-close').forEach(button => button.addEventListener('click', () => numberDetailDialog.close()));
+    numberDetailDialog.addEventListener('click', event => {
+      const rect = numberDetailDialog.getBoundingClientRect();
+      if (event.target === numberDetailDialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) numberDetailDialog.close();
+    });
+    numberDetailDialog.addEventListener('close', () => {
+      document.documentElement.style.overflow = numberDetailOverflow;
+      numberDetailOpener?.focus({ preventScroll: true });
+    });
     const consultationDialog = document.querySelector('#consultation-dialog');
     const consultationTrigger = document.querySelector('.consultation-trigger');
     let consultationScrollStyle = '';
