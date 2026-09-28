@@ -426,6 +426,23 @@
     .number-detail-value { display: block; margin: 20px 0; color: var(--jade); font-size: 3.2rem; text-align: center; }
     .number-detail-actions { display: flex; flex-direction: column; gap: 12px; }
     .number-detail-actions .button { margin-top: 0; white-space: normal; text-align: center; font-size: .9rem; }
+
+    #ryumon { scroll-margin-top: 90px; }
+    .ryumon-entry { display:grid; grid-template-columns:1fr 1fr; overflow:hidden; border-radius:24px; background:#08171a; color:#f4eddd; border:1px solid #b28a4355; }
+    .ryumon-preview { width:100%; height:100%; min-height:290px; object-fit:cover; background:#03080d; }
+    .ryumon-copy { padding:clamp(24px,4vw,56px); align-self:center; }
+    .ryumon-copy .kicker { color:#dfc991; }
+    .ryumon-copy h2 { color:#f4eddd; font-size:clamp(1.4rem,3vw,2rem); line-height:1.6; margin:10px 0 18px; }
+    .ryumon-copy p { color:#c8d6d0; }
+    .ryumon-copy .button { cursor:pointer; font:inherit; }
+    #ryumon-dialog { padding:0; width:min(1240px,96vw); height:94dvh; max-width:96vw; max-height:94dvh; border:1px solid #48615e; border-radius:18px; background:#070e12; color:#e8eee9; overflow:hidden; }
+    #ryumon-dialog::backdrop { background:rgba(0,12,14,.82); backdrop-filter:blur(6px); }
+    #ryumon-dialog[open] { display:flex; flex-direction:column; }
+    .ryumon-dialog-header { flex-shrink:0; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 18px; border-bottom:1px solid #304249; }
+    .ryumon-dialog-header h2 { font-size:14px; font-weight:normal; margin:0; color:#dfc991; }
+    #ryumon-close { font:inherit; font-size:13px; min-height:44px; padding:8px 14px; border:1px solid #6b827b; border-radius:8px; background:#14272b; color:#f4eddd; cursor:pointer; }
+    #ryumon-frame { border:0; flex:1; min-height:0; width:100%; background:#070e12; }
+    @media(max-width:700px) { .ryumon-entry { grid-template-columns:1fr; } .ryumon-preview { height:220px; min-height:0; } #ryumon-dialog { width:100vw; max-width:100vw; height:100dvh; max-height:100dvh; border:0; border-radius:0; } }
   </style>
 </head>
 <body>
@@ -434,7 +451,7 @@
       <button class="menu-button" type="button" aria-label="メニューを開く" aria-expanded="false">☰</button>
       <a class="brand" href="#top">龍秘術®<small>RYUHIJUTSU</small></a>
       <div class="nav-links">
-        <a href="#about">龍秘術®とは</a><a href="#flow">セッション</a><a href="#numbers">数字体験</a><a href="#price">料金</a><a href="#profile">プロフィール</a><a href="#faq">よくある質問</a>
+        <a href="#about">龍秘術®とは</a><a href="#flow">セッション</a><a href="#numbers">数字体験</a><a href="#ryumon">龍紋</a><a href="#price">料金</a><a href="#profile">プロフィール</a><a href="#faq">よくある質問</a>
         <div class="cta-swiper nav-swiper" aria-label="おすすめメニュー">
           <div class="cta-swiper-track"><a class="cta-slide" href="#contact">予約・お問い合わせ</a><a class="cta-slide" href="#numbers">数字体験を試す</a><a class="cta-slide" href="#reading">文章を読んでみる</a></div>
         </div>
@@ -514,6 +531,20 @@
           <p class="lead">答えを急がず、浮かんだ言葉をひとつだけ心に置いてみてください。</p>
           <div class="actions"><a class="button button-primary" href="https://ai-bot-beta-one.vercel.app/">この問いをもう少し深める</a></div>
           <p class="dragon-guide">スピリットドラゴンが、あなたの問いをさらに深めます。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="ryumon">
+      <div class="container">
+        <div class="ryumon-entry">
+          <img class="ryumon-preview" src="ryumon-preview.svg" alt="青緑と金色の光が重なる龍紋のイメージ" loading="lazy" width="1000" height="650">
+          <div class="ryumon-copy">
+            <p class="kicker">RYUMON · LIGHT EXPERIENCE</p>
+            <h2>あなただけの<br>龍紋を描く</h2>
+            <p>心の向くままに、光を紡いでみませんか。<br>指先から、ひとつだけの紋様が生まれます。</p>
+            <button class="button button-primary" id="ryumon-open" type="button" aria-haspopup="dialog" aria-controls="ryumon-dialog">描いてみる</button>
+          </div>
         </div>
       </div>
     </section>
@@ -1105,5 +1136,27 @@
     }, { threshold: .12 });
     document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
   </script>
+
+  <dialog id="ryumon-dialog" aria-labelledby="ryumon-dialog-title">
+    <div class="ryumon-dialog-header"><h2 id="ryumon-dialog-title">龍紋 — 光を紡ぐ</h2><button id="ryumon-close" type="button" autofocus>閉じてホームページへ ×</button></div>
+    <iframe id="ryumon-frame" title="龍紋を描く" data-src="dragon-silk.html"></iframe>
+  </dialog>
+  <script>
+  (() => {
+    const dialog=document.getElementById('ryumon-dialog'), frame=document.getElementById('ryumon-frame'), trigger=document.getElementById('ryumon-open');
+    let previousOverflow='';
+    trigger.addEventListener('click',()=>{
+      if(!frame.getAttribute('src')) frame.src=frame.dataset.src;
+      previousOverflow=document.documentElement.style.overflow;
+      document.documentElement.style.overflow='hidden';
+      dialog.showModal();
+    });
+    document.getElementById('ryumon-close').addEventListener('click',()=>dialog.close());
+    frame.addEventListener('load',()=>{frame.contentDocument.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();dialog.close();}});});
+    dialog.addEventListener('close',()=>{document.documentElement.style.overflow=previousOverflow;trigger.focus({preventScroll:true});});
+  })();
+  </script>
+
 </body>
 </html>
+

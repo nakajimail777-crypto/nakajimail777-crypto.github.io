@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>龍紋 — 光を紡ぐ</title>
+<style>
+:root{color-scheme:dark;font-family:"Yu Gothic","Meiryo",sans-serif;color:#e8eee9;background:#070e12}*{box-sizing:border-box}body{margin:0}button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible{outline:2px solid #f4db9b;outline-offset:4px}.app{height:100svh;min-height:640px;display:flex;flex-direction:column;padding:24px 36px 18px;max-width:1800px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;gap:18px}h1{font-family:"Yu Mincho",serif;font-weight:400;letter-spacing:.3em;font-size:28px;margin:0}h1 span{font-family:serif;font-size:11px;letter-spacing:.25em;color:#b3ac96;margin-left:18px}.edition{font-size:10px;letter-spacing:.2em;color:#93a3a6}.lead{font-family:"Yu Mincho",serif;font-size:14px;letter-spacing:.15em;color:#aebcbd;margin:12px 0 18px}.stage{position:relative;flex:1;min-height:300px;overflow:hidden;border:1px solid #233238;border-radius:18px;background:#03080d;box-shadow:0 20px 80px #0005}canvas{display:block;width:100%;height:100%;position:absolute;touch-action:none;cursor:crosshair}.stamp{position:absolute;top:20px;left:22px;pointer-events:none;color:#96aaaa;font-size:10px;letter-spacing:.24em}.hint{position:absolute;bottom:22px;left:20px;right:20px;text-align:center;font-size:12px;color:#a4b6bd;pointer-events:none;transition:opacity .5s}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;padding:20px 0 12px}.group{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.label{color:#91a5aa;font-size:11px;margin-right:7px;letter-spacing:.1em}button,select{border:1px solid #304249;color:#cbd9db;background:#111d22;border-radius:9px;padding:10px 14px;min-height:42px;font-size:12px;transition:background .2s,border-color .2s}button:hover{background:#21343b;border-color:#647d80}button[aria-pressed=true]{background:#20333b;border-color:#a5c5c8;color:#fff}button:disabled{opacity:.35;cursor:default}.color{display:inline-block;border-radius:50%;width:9px;height:9px;background:var(--dot);box-shadow:0 0 10px var(--dot);margin-right:8px}.save{background:#dfc28b;color:#142024;border-color:#dfc28b}.save:hover{background:#f1d9ab}.footer{display:flex;justify-content:space-between;gap:12px;font-size:10px;color:#84989c;letter-spacing:.08em}#status{min-height:16px} @media(max-width:700px){.app{padding:18px 14px 14px;min-height:730px}h1{font-size:24px}h1 span{font-size:9px;margin-left:10px}.edition{display:none}.lead{font-size:12px;line-height:1.8}.toolbar{gap:12px;padding-top:14px}.group{gap:6px}button,select{padding:10px 11px;min-height:44px}.label{display:none}.toolbar>.group:last-child{width:100%}.save{margin-left:auto}.footer{font-size:9px}.stamp{font-size:9px;left:16px}}
+</style>
+</head>
+<body><main class="app">
+<header><h1>龍紋<span>RYUMON</span></h1><div class="edition">龍秘術® / LIGHT STUDY 01</div></header>
+<p class="lead">指先から生まれる、あなただけの光の紋様。</p>
+<section class="stage" aria-label="光の紋様を描くエリア"><canvas id="art" width="1600" height="1100" aria-label="押しながらなぞると光の線を描けます。描画見本ボタンでも紋様を作れます。">光の描画にはCanvas対応ブラウザーが必要です。</canvas><div class="stamp">光 を 紡 ぐ</div><div class="hint" id="hint">押しながら、ゆっくりなぞってみてください</div></section>
+<div class="toolbar"><div class="group" aria-label="光の色"><span class="label">光の色</span><button data-hue="193" aria-pressed="true"><span class="color" style="--dot:#67d7ff"></span>青龍</button><button data-hue="40" aria-pressed="false"><span class="color" style="--dot:#f0cb78"></span>黄金</button><button data-hue="155" aria-pressed="false"><span class="color" style="--dot:#79e7b8"></span>翡翠</button></div>
+<div class="group"><label class="label" for="symmetry">紋様</label><select id="symmetry" aria-label="紋様の対称性"><option value="2">左右対称</option><option value="5">五芒の紋</option><option value="6">六花の紋</option><option value="1">自由に描く</option></select></div>
+<div class="group"><button id="demo">描画見本</button><button id="undo" disabled>ひとつ戻す</button><button id="clear">新しく描く</button><button id="save" class="save">画像を保存 ↗</button></div></div>
+<div class="footer"><span id="status" role="status" aria-live="polite">最初の光は見本です。そのまま描き足せます。</span><span>ゆっくり、心の向くままに。</span></div>
+</main>
+<script>
+(()=>{'use strict';
+const canvas=document.getElementById('art'),ctx=canvas.getContext('2d'),W=1600,H=1100;
+const status=document.getElementById('status'),hint=document.getElementById('hint'),undo=document.getElementById('undo');
+let hue=193,mode=2,active=null,target={x:800,y:550},threads=[],frame=0,tail=0,phase=0,history=[];
+const setStatus=t=>status.textContent=t;
+function background(){ctx.globalCompositeOperation='source-over';ctx.fillStyle='#03080d';ctx.fillRect(0,0,W,H)}
+function remember(){history.push(ctx.getImageData(0,0,W,H));if(history.length>5)history.shift();undo.disabled=false}
+function stop(){if(frame)cancelAnimationFrame(frame);frame=0;active=null;threads=[];tail=0}
+function makeThreads(x,y){threads=Array.from({length:28},(_,i)=>({x,y,vx:0,vy:0,lastX:x,lastY:y,angle:i*2.39996,k:.012+i*.0018,drag:.72+i*.0038}));phase=0}
+function transforms(fn){if(mode===2){fn();ctx.save();ctx.translate(W,0);ctx.scale(-1,1);fn();ctx.restore()}else if(mode===5||mode===6){for(let i=0;i<mode;i++){ctx.save();ctx.translate(W/2,H/2);ctx.rotate(i*Math.PI*2/mode);ctx.translate(-W/2,-H/2);fn();ctx.restore()}}else fn()}
+function advance(x,y,power=1){phase+=.055;ctx.globalCompositeOperation='lighter';threads.forEach((t,i)=>{const oldX=t.x,oldY=t.y;const d=Math.hypot(x-t.x,y-t.y);const sway=Math.min(24,d*.09);t.vx=(t.vx+(x+Math.sin(phase+t.angle)*sway-t.x)*t.k)*t.drag;t.vy=(t.vy+(y+Math.cos(phase*.8+t.angle)*sway-t.y)*t.k)*t.drag;t.x+=t.vx;t.y+=t.vy;
+ctx.lineWidth=i%7===0?2:1.1;ctx.strokeStyle=`hsla(${hue+(i-14)*.65},85%,${60+i%5*4}%,${.24*power})`;
+transforms(()=>{ctx.beginPath();ctx.moveTo(oldX,oldY);ctx.lineTo(t.x,t.y);ctx.stroke();if(i>0&&i%2===0){const a=threads[i-1],dist=Math.hypot(t.x-a.x,t.y-a.y);if(dist>2&&dist<95){ctx.strokeStyle=`hsla(${hue},80%,65%,${.04*power})`;ctx.beginPath();ctx.moveTo(t.x,t.y);ctx.quadraticCurveTo((t.x+a.x)/2+t.vy*.7,(t.y+a.y)/2-t.vx*.7,a.x,a.y);ctx.stroke()}}});});ctx.globalCompositeOperation='source-over'}
+function loop(){if(active!==null||tail>0){advance(target.x,target.y,active!==null?1:Math.min(1,tail/35));if(active===null)tail--;frame=requestAnimationFrame(loop)}else{frame=0;threads=[]}}
+function point(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
+canvas.addEventListener('pointerdown',e=>{if(active!==null||e.button!==0)return;e.preventDefault();stop();remember();active=e.pointerId;canvas.setPointerCapture(e.pointerId);target=point(e);makeThreads(target.x,target.y);hint.style.opacity=0;setStatus('光を紡いでいます');frame=requestAnimationFrame(loop)});
+canvas.addEventListener('pointermove',e=>{if(e.pointerId===active)target=point(e)});
+function release(e){if(e.pointerId!==active)return;active=null;tail=38;setStatus('いい紋様ができたら、画像として残せます。')}
+canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
+document.querySelectorAll('[data-hue]').forEach(b=>b.addEventListener('click',()=>{hue=Number(b.dataset.hue);document.querySelectorAll('[data-hue]').forEach(a=>a.setAttribute('aria-pressed',String(a===b)));setStatus(b.textContent+'の光を選びました。次の線から変わります。')}));
+document.getElementById('symmetry').addEventListener('change',e=>{mode=Number(e.target.value);setStatus('次の線から「'+e.target.selectedOptions[0].textContent+'」になります。')});
+undo.addEventListener('click',()=>{stop();const prior=history.pop();if(prior)ctx.putImageData(prior,0,0);undo.disabled=!history.length;setStatus('ひとつ前の紋様に戻しました。')});
+document.getElementById('clear').addEventListener('click',()=>{stop();remember();background();hint.style.opacity=1;setStatus('新しい光を描けます。「ひとつ戻す」で元に戻せます。')});
+function demo(save=true){stop();if(save)remember();background();const strokes=[t=>({x:800+250*Math.sin(t*Math.PI*.95)*Math.sin(t*4.8+.3),y:140+t*810}),t=>({x:820+330*t+36*Math.sin(t*8),y:500-355*t+70*Math.sin(t*5)}),t=>({x:800+390*Math.sin(t*Math.PI*.85),y:680+110*Math.sin(t*7)-230*t}),t=>({x:810+185*Math.sin(t*3.8),y:480+400*t})];for(const path of strokes){const p=path(0);makeThreads(p.x,p.y);for(let i=0;i<240;i++){const p=path(i/239);advance(p.x,p.y,.88)}for(let i=0;i<25;i++){const p=path(1);advance(p.x,p.y,.45)}}threads=[];hint.style.opacity=1;if(save)setStatus('描画見本です。色や対称性を変えて、もう一度試せます。')}
+document.getElementById('demo').addEventListener('click',()=>demo());
+document.getElementById('save').addEventListener('click',()=>{canvas.toBlob(blob=>{if(!blob){setStatus('保存できませんでした。もう一度お試しください。');return}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ryumon-'+new Date().toISOString().slice(0,10)+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);setStatus('紋様のPNG画像を保存しました。')},'image/png')});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});demo(false);
+})();
+</script></body></html>
+
+
