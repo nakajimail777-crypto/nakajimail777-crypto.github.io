@@ -23,12 +23,14 @@
   .footer{display:block;font-size:9px;line-height:1.6;letter-spacing:0}
   .footer>span:last-child{display:none}
 }
+.motion-controls{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.motion-controls button[aria-pressed=true]{color:#baffee;border-color:#6fc9b5;background:#163b39}
 </style>
 </head>
 <body><main class="app">
 <header><h1>龍紋<span>RYUMON</span></h1><div class="edition">龍秘術® / LIGHT STUDY 01</div></header>
 <p class="lead">指先から生まれる、あなただけの光の紋様。</p>
 <section class="stage" aria-label="光の紋様を描くエリア"><canvas id="art" width="1600" height="1100" aria-label="押しながらなぞると光の線を描けます。描画見本ボタンでも紋様を作れます。">光の描画にはCanvas対応ブラウザーが必要です。</canvas><div class="stamp">光 を 紡 ぐ</div><div class="hint" id="hint">押しながら、ゆっくりなぞってみてください</div></section>
+<div class="motion-controls"><button id="flow" aria-pressed="false">うねり OFF</button><button id="stardust" aria-pressed="false">星の粉 OFF</button><button id="afterglow" aria-pressed="false">余韻 OFF</button></div>
 <div class="toolbar"><div class="group" aria-label="光の色"><span class="label">光の色</span><button data-hue="193" aria-pressed="true"><span class="color" style="--dot:#67d7ff"></span>青龍</button><button data-hue="40" aria-pressed="false"><span class="color" style="--dot:#f0cb78"></span>黄金</button><button data-hue="155" aria-pressed="false"><span class="color" style="--dot:#79e7b8"></span>翡翠</button></div>
 <div class="group"><label class="label" for="symmetry">紋様</label><select id="symmetry" aria-label="紋様の対称性"><option value="2">左右対称</option><option value="5">五芒の紋</option><option value="6">六花の紋</option><option value="1">自由に描く</option></select></div>
 <div class="group"><button id="demo">描画見本</button><button id="undo" disabled>ひとつ戻す</button><button id="clear">新しく描く</button><button id="save" class="save">画像を保存 ↗</button></div></div>
@@ -38,21 +40,62 @@
 (()=>{'use strict';
 const canvas=document.getElementById('art'),ctx=canvas.getContext('2d'),W=1600,H=1100;
 const status=document.getElementById('status'),hint=document.getElementById('hint'),undo=document.getElementById('undo');
+let flowing=false;
+let lingering=false,drift=null;
+const afterglowButton=document.getElementById('afterglow');
+afterglowButton.addEventListener('click',()=>{lingering=!lingering;afterglowButton.setAttribute('aria-pressed',String(lingering));afterglowButton.textContent=lingering?'余韻 ON':'余韻 OFF';if(!lingering&&drift)stop();setStatus(lingering?'余韻をONにしました。指を離すと光が少し泳ぎます。':'余韻をOFFにしました。')});
+let sparkling=false,particles=[],sparkFrame=0,lastSpark=0;
+const sparkCanvas=document.createElement('canvas');sparkCanvas.width=W;sparkCanvas.height=H;sparkCanvas.style.pointerEvents='none';sparkCanvas.setAttribute('aria-hidden','true');canvas.after(sparkCanvas);
+const sparkCtx=sparkCanvas.getContext('2d'),sparkButton=document.getElementById('stardust');
+function clearSparks(){cancelAnimationFrame(sparkFrame);sparkFrame=0;particles=[];sparkCtx.clearRect(0,0,W,H)}
+sparkButton.addEventListener('click',()=>{sparkling=!sparkling;sparkButton.setAttribute('aria-pressed',String(sparkling));sparkButton.textContent=sparkling?'星の粉 ON':'星の粉 OFF';if(!sparkling)clearSparks();setStatus(sparkling?'星の粉をONにしました。なぞると小さな星が散って消えます。':'星の粉をOFFにしました。')});
+function emitSparks(x,y){
+const now=performance.now();if(!sparkling||now-lastSpark<25)return;lastSpark=now;
+for(let i=0;i<3;i++){const a=Math.random()*Math.PI*2,r=Math.random()*22;particles.push({x:x+Math.cos(a)*r,y:y+Math.sin(a)*r,vx:Math.cos(a)*(25+Math.random()*60),vy:Math.sin(a)*(25+Math.random()*60),born:now,life:800+Math.random()*700,size:2+Math.random()*4,hue,mode})}
+if(particles.length>150)particles.splice(0,particles.length-150);if(!sparkFrame)sparkFrame=requestAnimationFrame(drawSparks);
+}
+function drawSparks(now){sparkCtx.clearRect(0,0,W,H);particles=particles.filter(p=>now-p.born<p.life);
+for(const p of particles){const age=(now-p.born)/1000,fade=1-(now-p.born)/p.life,x=p.x+p.vx*age,y=p.y+p.vy*age+12*age*age;
+const paint=()=>{sparkCtx.fillStyle=`hsla(${p.hue},95%,85%,${fade})`;sparkCtx.shadowColor=`hsl(${p.hue},95%,70%)`;sparkCtx.shadowBlur=12*fade;sparkCtx.beginPath();sparkCtx.arc(x,y,p.size*fade,0,Math.PI*2);sparkCtx.fill();sparkCtx.fillStyle=`rgba(255,255,255,${fade*.85})`;sparkCtx.fillRect(x-p.size*2,y-.6,p.size*4,1.2);sparkCtx.fillRect(x-.6,y-p.size*2,1.2,p.size*4)};
+const count=p.mode===1?1:p.mode;for(let i=0;i<count;i++){sparkCtx.save();if(p.mode===2&&i){sparkCtx.translate(W,0);sparkCtx.scale(-1,1)}else if(p.mode>2){sparkCtx.translate(W/2,H/2);sparkCtx.rotate(i*Math.PI*2/count);sparkCtx.translate(-W/2,-H/2)}paint();sparkCtx.restore()}}
+sparkFrame=particles.length?requestAnimationFrame(drawSparks):0;
+}
+const flowButton=document.getElementById('flow');
+flowButton.addEventListener('click',()=>{flowing=!flowing;flowButton.setAttribute('aria-pressed',String(flowing));flowButton.textContent=flowing?'うねり ON':'うねり OFF';setStatus(flowing?'うねりをONにしました。次の線から変わります。「描画見本」でも試せます。':'うねりをOFFにしました。次の線から元の描き心地に戻ります。')});
 let hue=193,mode=2,active=null,target={x:800,y:550},threads=[],frame=0,tail=0,phase=0,history=[];
 const setStatus=t=>status.textContent=t;
 function background(){ctx.globalCompositeOperation='source-over';ctx.fillStyle='#03080d';ctx.fillRect(0,0,W,H)}
 function remember(){history.push(ctx.getImageData(0,0,W,H));if(history.length>5)history.shift();undo.disabled=false}
-function stop(){if(frame)cancelAnimationFrame(frame);frame=0;active=null;threads=[];tail=0}
+function stop(){if(frame)cancelAnimationFrame(frame);frame=0;active=null;threads=[];tail=0;drift=null;clearSparks()}
 function makeThreads(x,y){threads=Array.from({length:28},(_,i)=>({x,y,vx:0,vy:0,lastX:x,lastY:y,angle:i*2.39996,k:.012+i*.0018,drag:.72+i*.0038}));phase=0}
 function transforms(fn){if(mode===2){fn();ctx.save();ctx.translate(W,0);ctx.scale(-1,1);fn();ctx.restore()}else if(mode===5||mode===6){for(let i=0;i<mode;i++){ctx.save();ctx.translate(W/2,H/2);ctx.rotate(i*Math.PI*2/mode);ctx.translate(-W/2,-H/2);fn();ctx.restore()}}else fn()}
-function advance(x,y,power=1){phase+=.055;ctx.globalCompositeOperation='lighter';threads.forEach((t,i)=>{const oldX=t.x,oldY=t.y;const d=Math.hypot(x-t.x,y-t.y);const sway=Math.min(24,d*.09);t.vx=(t.vx+(x+Math.sin(phase+t.angle)*sway-t.x)*t.k)*t.drag;t.vy=(t.vy+(y+Math.cos(phase*.8+t.angle)*sway-t.y)*t.k)*t.drag;t.x+=t.vx;t.y+=t.vy;
-ctx.lineWidth=i%7===0?2:1.1;ctx.strokeStyle=`hsla(${hue+(i-14)*.65},85%,${60+i%5*4}%,${.24*power})`;
+function advance(x,y,power=1){phase+=flowing?.085:.055;ctx.globalCompositeOperation='lighter';threads.forEach((t,i)=>{const oldX=t.x,oldY=t.y;const d=Math.hypot(x-t.x,y-t.y);const sway=Math.min(24,d*.09);
+// Nearby strands share a rolling wave, with a gradual phase offset across the ribbon.
+const wave=phase+i*.075,amplitude=flowing?Math.min(85,25+d*.28):0;
+const curlX=amplitude*(Math.sin(wave*1.7)+.35*Math.sin(wave*3.1));
+const curlY=amplitude*(Math.cos(wave*1.3)+.3*Math.sin(wave*2.7));
+t.vx=(t.vx+(x+curlX+Math.sin(phase+t.angle)*sway-t.x)*t.k)*t.drag;t.vy=(t.vy+(y+curlY+Math.cos(phase*.8+t.angle)*sway-t.y)*t.k)*t.drag;t.x+=t.vx;t.y+=t.vy;
+ctx.lineWidth=flowing?(i%7===0?1.8:.8):(i%7===0?2:1.1);ctx.strokeStyle=`hsla(${hue+(i-14)*.65},85%,${60+i%5*4}%,${(flowing?.10+.14*Math.pow(Math.sin(wave),2):.24)*power})`;
 transforms(()=>{ctx.beginPath();ctx.moveTo(oldX,oldY);ctx.lineTo(t.x,t.y);ctx.stroke();if(i>0&&i%2===0){const a=threads[i-1],dist=Math.hypot(t.x-a.x,t.y-a.y);if(dist>2&&dist<95){ctx.strokeStyle=`hsla(${hue},80%,65%,${.04*power})`;ctx.beginPath();ctx.moveTo(t.x,t.y);ctx.quadraticCurveTo((t.x+a.x)/2+t.vy*.7,(t.y+a.y)/2-t.vx*.7,a.x,a.y);ctx.stroke()}}});});ctx.globalCompositeOperation='source-over'}
-function loop(){if(active!==null||tail>0){advance(target.x,target.y,active!==null?1:Math.min(1,tail/35));if(active===null)tail--;frame=requestAnimationFrame(loop)}else{frame=0;threads=[]}}
+function loop(now=performance.now()){
+if(active===null&&drift){
+const elapsed=Math.min(2.4,Math.max(0,(now-drift.start)/1000)),dt=Math.min(.035,Math.max(0,(now-drift.last)/1000));drift.last=now;
+const fade=Math.pow(1-elapsed/2.4,2),angle=drift.angle+elapsed*2.5;
+target.x+=Math.cos(angle)*drift.speed*fade*dt;target.y+=Math.sin(angle)*drift.speed*fade*dt;
+advance(target.x,target.y,fade*.8);if(fade>.15)emitSparks(target.x,target.y);
+if(elapsed<2.4){frame=requestAnimationFrame(loop);return}
+drift=null;tail=0;frame=0;threads=[];setStatus('光が静まりました。描き足したり、画像を保存できます。');return;
+}
+if(active!==null)emitSparks(target.x,target.y);
+if(active!==null||tail>0){advance(target.x,target.y,active!==null?1:Math.min(1,tail/35));if(active===null)tail--;frame=requestAnimationFrame(loop)}else{frame=0;threads=[]}}
 function point(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
 canvas.addEventListener('pointerdown',e=>{if(active!==null||e.button!==0)return;e.preventDefault();stop();remember();active=e.pointerId;canvas.setPointerCapture(e.pointerId);target=point(e);makeThreads(target.x,target.y);hint.style.opacity=0;setStatus('光を紡いでいます');frame=requestAnimationFrame(loop)});
 canvas.addEventListener('pointermove',e=>{if(e.pointerId===active)target=point(e)});
-function release(e){if(e.pointerId!==active)return;active=null;tail=38;setStatus('いい紋様ができたら、画像として残せます。')}
+function release(e){if(e.pointerId!==active)return;active=null;
+if(lingering&&e.type==='pointerup'){
+const strand=threads[Math.floor(threads.length/2)],vx=strand?strand.vx:0,vy=strand?strand.vy:0,now=performance.now();
+drift={start:now,last:now,angle:Math.hypot(vx,vy)>.1?Math.atan2(vy,vx):-Math.PI/2,speed:Math.min(240,90+Math.hypot(vx,vy)*12)};tail=0;setStatus('光が余韻を描いています…');
+}else{tail=38;setStatus('いい紋様ができたら、画像として残せます。')}}
 canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',release);canvas.addEventListener('lostpointercapture',release);
 document.querySelectorAll('[data-hue]').forEach(b=>b.addEventListener('click',()=>{hue=Number(b.dataset.hue);document.querySelectorAll('[data-hue]').forEach(a=>a.setAttribute('aria-pressed',String(a===b)));setStatus(b.textContent+'の光を選びました。次の線から変わります。')}));
 document.getElementById('symmetry').addEventListener('change',e=>{mode=Number(e.target.value);setStatus('次の線から「'+e.target.selectedOptions[0].textContent+'」になります。')});
