@@ -24,6 +24,7 @@
   .footer>span:last-child{display:none}
 }
 .motion-controls{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.motion-controls button[aria-pressed=true]{color:#baffee;border-color:#6fc9b5;background:#163b39}
+.record-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}.record-controls span{font-size:11px;color:#aebcbd}.record-controls a{color:#f1d9ab;font-size:12px;padding:10px;border:1px solid #647d80;border-radius:9px}.record-preview{display:block;max-width:100%;width:360px;margin:0 0 12px;border-radius:10px}.record-preview[hidden],.record-controls [hidden]{display:none}#record[data-armed=true]{border-color:#f1d9ab;color:#f1d9ab}#record[data-recording=true]{border-color:#ff9393;color:#ffcaca}
 </style>
 </head>
 <body><main class="app">
@@ -34,6 +35,8 @@
 <div class="toolbar"><div class="group" aria-label="光の色"><span class="label">光の色</span><button data-hue="193" aria-pressed="true"><span class="color" style="--dot:#67d7ff"></span>青龍</button><button data-hue="40" aria-pressed="false"><span class="color" style="--dot:#f0cb78"></span>黄金</button><button data-hue="155" aria-pressed="false"><span class="color" style="--dot:#79e7b8"></span>翡翠</button></div>
 <div class="group"><label class="label" for="symmetry">紋様</label><select id="symmetry" aria-label="紋様の対称性"><option value="2">左右対称</option><option value="5">五芒の紋</option><option value="6">六花の紋</option><option value="1">自由に描く</option></select></div>
 <div class="group"><button id="demo">描画見本</button><button id="undo" disabled>ひとつ戻す</button><button id="clear">新しく描く</button><button id="save" class="save">画像を保存 ↗</button></div></div>
+<div class="record-controls"><button id="record">10秒録画</button><a id="video-save" hidden>動画を保存 ↗</a><span id="record-status" role="status" aria-live="polite">ボタンを押してから描き始めると、10秒間録画します。</span></div>
+<video id="record-preview" class="record-preview" controls playsinline hidden aria-label="録画した龍紋"></video>
 <div class="footer"><span id="status" role="status" aria-live="polite">最初の光は見本です。そのまま描き足せます。</span><span>ゆっくり、心の向くままに。</span></div>
 </main>
 <script>
@@ -104,8 +107,51 @@ document.getElementById('clear').addEventListener('click',()=>{stop();remember()
 function demo(save=true){stop();if(save)remember();background();const strokes=[t=>({x:800+250*Math.sin(t*Math.PI*.95)*Math.sin(t*4.8+.3),y:140+t*810}),t=>({x:820+330*t+36*Math.sin(t*8),y:500-355*t+70*Math.sin(t*5)}),t=>({x:800+390*Math.sin(t*Math.PI*.85),y:680+110*Math.sin(t*7)-230*t}),t=>({x:810+185*Math.sin(t*3.8),y:480+400*t})];for(const path of strokes){const p=path(0);makeThreads(p.x,p.y);for(let i=0;i<240;i++){const p=path(i/239);advance(p.x,p.y,.88)}for(let i=0;i<25;i++){const p=path(1);advance(p.x,p.y,.45)}}threads=[];hint.style.opacity=1;if(save)setStatus('描画見本です。色や対称性を変えて、もう一度試せます。')}
 document.getElementById('demo').addEventListener('click',()=>demo());
 document.getElementById('save').addEventListener('click',()=>{canvas.toBlob(blob=>{if(!blob){setStatus('保存できませんでした。もう一度お試しください。');return}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ryumon-'+new Date().toISOString().slice(0,10)+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);setStatus('紋様のPNG画像を保存しました。')},'image/png')});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stop()});demo(false);
+const recordButton=document.getElementById('record'),recordStatus=document.getElementById('record-status'),videoSave=document.getElementById('video-save'),videoPreview=document.getElementById('record-preview');
+const RECORDING_MS=10000;
+let armed=false,recording=null,videoURL=null;
+const recordingSupported=typeof MediaRecorder!=='undefined'&&typeof canvas.captureStream==='function';
+if(!recordingSupported){recordButton.disabled=true;recordStatus.textContent='このブラウザーでは動画録画に対応していません。画像保存をご利用ください。'}
+function resetRecordButton(){armed=false;recordButton.disabled=!recordingSupported;recordButton.textContent='10秒録画';delete recordButton.dataset.armed;delete recordButton.dataset.recording}
+function finishRecording(){const session=recording;if(!session)return;clearTimeout(session.timer);cancelAnimationFrame(session.frame);if(session.recorder.state!=='inactive')session.recorder.stop()}
+function startRecording(){
+if(!armed||recording)return;
+armed=false;delete recordButton.dataset.armed;
+recordButton.disabled=true;
+let stream;
+try{
+const composite=document.createElement('canvas');composite.width=1280;composite.height=880;const compositeCtx=composite.getContext('2d');
+const paint=()=>{compositeCtx.drawImage(canvas,0,0,1280,880);compositeCtx.drawImage(sparkCanvas,0,0,1280,880)};paint();
+stream=composite.captureStream(0);
+const mime=['video/mp4;codecs=avc1.42E01E','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'].find(type=>MediaRecorder.isTypeSupported(type));
+const recorder=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:5000000}:{videoBitsPerSecond:5000000});
+const session={recorder,stream,chunks:[],frame:0,timer:0,failed:false,started:performance.now(),interrupted:false};recording=session;
+recorder.ondataavailable=e=>{if(e.data.size)session.chunks.push(e.data)};
+recorder.onerror=()=>{session.failed=true;recordStatus.textContent='録画できませんでした。もう一度お試しください。';finishRecording()};
+recorder.onstop=()=>{
+clearTimeout(session.timer);cancelAnimationFrame(session.frame);session.stream.getTracks().forEach(track=>track.stop());recording=null;resetRecordButton();
+if(session.failed)return;
+const type=recorder.mimeType||session.chunks[0]?.type||'video/webm',blob=new Blob(session.chunks,{type});
+if(!blob.size){recordStatus.textContent='動画を作成できませんでした。もう一度お試しください。';return}
+videoPreview.pause();videoPreview.removeAttribute('src');videoPreview.load();if(videoURL)URL.revokeObjectURL(videoURL);videoURL=URL.createObjectURL(blob);
+videoPreview.src=videoURL;videoPreview.hidden=false;videoSave.href=videoURL;videoSave.download='ryumon-'+new Date().toISOString().replace(/[:.]/g,'-')+(type.includes('mp4')?'.mp4':'.webm');videoSave.hidden=false;
+recordStatus.textContent=session.interrupted?'画面を離れたため録画を終了しました。ここまでの動画を保存できます。':'10秒の録画ができました。「動画を保存」を押してください。';
+};
+recorder.start();session.timer=setTimeout(finishRecording,RECORDING_MS);recordButton.disabled=true;recordButton.dataset.recording='true';recordStatus.textContent='録画中です。そのまま自由に描いてください。';
+const render=()=>{if(recording!==session)return;paint();stream.getVideoTracks()[0]?.requestFrame?.();recordButton.textContent='録画中 '+Math.max(1,Math.ceil((RECORDING_MS-performance.now()+session.started)/1000))+'秒';session.frame=requestAnimationFrame(render)};render();
+}catch(error){if(recording){clearTimeout(recording.timer);cancelAnimationFrame(recording.frame);recording.recorder.onstop=null;recording.recorder.onerror=null;if(recording.recorder.state!=='inactive')recording.recorder.stop()}stream?.getTracks().forEach(track=>track.stop());recording=null;resetRecordButton();recordStatus.textContent='この環境では録画を開始できませんでした。別のブラウザーでお試しください。'}
+}
+recordButton.addEventListener('click',()=>{if(recording)return;armed=!armed;recordButton.dataset.armed=String(armed);recordButton.textContent=armed?'録画待ち・取消':'10秒録画';recordStatus.textContent=armed?'描き始めると録画が始まります。10秒間、自由になぞってください。':'ボタンを押してから描き始めると、10秒間録画します。'});
+canvas.addEventListener('pointerdown',e=>{if(e.button===0&&active===e.pointerId)startRecording()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(recording){recording.interrupted=true;finishRecording()}stop()}});demo(false);
 })();
 </script></body></html>
+
+
+
+
+
+
+
 
 
