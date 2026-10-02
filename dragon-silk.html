@@ -25,6 +25,7 @@
 }
 .motion-controls{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.motion-controls button[aria-pressed=true]{color:#baffee;border-color:#6fc9b5;background:#163b39}
 .record-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}.record-controls span{font-size:11px;color:#aebcbd}.record-controls a{color:#f1d9ab;font-size:12px;padding:10px;border:1px solid #647d80;border-radius:9px}.record-preview{display:block;max-width:100%;width:360px;margin:0 0 12px;border-radius:10px}.record-preview[hidden],.record-controls [hidden]{display:none}#record[data-armed=true]{border-color:#f1d9ab;color:#f1d9ab}#record[data-recording=true]{border-color:#ff9393;color:#ffcaca}
+.video-help{font-size:11px;line-height:1.8;color:#aebcbd;margin:0 0 12px}.video-help p{margin:8px 0}.video-help summary{cursor:pointer;color:#dfc991;padding:10px 12px;border:1px solid #304249;border-radius:9px;width:fit-content}.video-help details[open]{padding-bottom:8px}.video-help #video-share{margin-top:10px}.video-help ol{padding-left:22px;margin:8px 0}.video-help strong{color:#e8eee9}.video-help[hidden],.video-help [hidden]{display:none}
 </style>
 </head>
 <body><main class="app">
@@ -36,6 +37,7 @@
 <div class="group"><label class="label" for="symmetry">紋様</label><select id="symmetry" aria-label="紋様の対称性"><option value="2">左右対称</option><option value="5">五芒の紋</option><option value="6">六花の紋</option><option value="1">自由に描く</option></select></div>
 <div class="group"><button id="demo">描画見本</button><button id="undo" disabled>ひとつ戻す</button><button id="clear">新しく描く</button><button id="save" class="save">画像を保存 ↗</button></div></div>
 <div class="record-controls"><button id="record">10秒録画</button><a id="video-save" hidden>動画を保存 ↗</a><span id="record-status" role="status" aria-live="polite">ボタンを押してから描き始めると、10秒間録画します。</span></div>
+<div id="video-help" class="video-help" hidden><p id="video-advice"></p><details><summary>保存できないときは</summary><button id="video-share" type="button" hidden>動画を共有</button><p><strong>今の動画を残したいとき</strong><br>「動画を共有」があれば、押して保存先を選んでください。表示されない場合は「動画を保存」をお試しください。</p><p>今の動画はChromeへ自動では移りません。保存できるまで、このページは閉じずに残してください。</p><p><strong>次の録画をChromeで作るには</strong></p><ol><li>LINEなど、今開いているアプリのメニューを開きます。</li><li>「ブラウザで開く」などの項目から、Chromeを選びます。項目名は端末によって異なります。</li><li>Chromeで龍紋を開き、録画・保存します。</li></ol></details></div>
 <video id="record-preview" class="record-preview" controls playsinline hidden aria-label="録画した龍紋"></video>
 <div class="footer"><span id="status" role="status" aria-live="polite">最初の光は見本です。そのまま描き足せます。</span><span>ゆっくり、心の向くままに。</span></div>
 </main>
@@ -110,6 +112,35 @@ document.getElementById('save').addEventListener('click',()=>{canvas.toBlob(blob
 const recordButton=document.getElementById('record'),recordStatus=document.getElementById('record-status'),videoSave=document.getElementById('video-save'),videoPreview=document.getElementById('record-preview');
 const RECORDING_MS=10000;
 let armed=false,recording=null,videoURL=null;
+// Retain the completed recording independently of the current recording session.
+let recordedBlob=null,recordedFile=null,sharing=false;
+const videoShare=document.getElementById('video-share'),videoHelp=document.getElementById('video-help'),videoAdvice=document.getElementById('video-advice');
+const likelyLine=/\bLine\//i.test(navigator.userAgent||'');
+function canShareVideo(){
+try{return !!recordedFile&&typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare({files:[recordedFile]})}catch{return false}
+}
+function updateVideoActions(){
+const shareable=canShareVideo();
+videoShare.hidden=!shareable;videoShare.disabled=sharing||!!recording;
+videoHelp.hidden=!likelyLine&&!recordedBlob;
+videoAdvice.textContent=likelyLine
+?(shareable?'LINEでは直接保存できない場合があります。「動画を共有」をお試しください。':'LINEでは直接保存できない場合があります。録画前にChromeなどで開くと安心です。')
+:(shareable?'動画を共有できます。保存先は端末の共有画面で選べます。':'このブラウザでは動画共有に対応していません。「動画を保存」をお試しください。');
+if(likelyLine&&recordedBlob&&!shareable)videoAdvice.textContent='この環境では動画共有に対応していません。保存もできない場合は、下の案内をご確認ください。動画はこの画面に残っています。';
+}
+videoShare.addEventListener('click',async()=>{
+if(sharing||recording||!recordedBlob)return;
+if(!canShareVideo()){updateVideoActions();recordStatus.textContent='この環境では動画共有に対応していません。動画はそのまま残っています。';return}
+const file=recordedFile;sharing=true;videoShare.disabled=true;
+try{
+// Call directly from the click so the browser retains user activation.
+await navigator.share({files:[file],title:'龍紋',text:'龍紋で描いた動画'});
+recordStatus.textContent='共有画面を開きました。動画はこの画面にも残っています。';
+}catch(error){
+recordStatus.textContent=error?.name==='AbortError'?'共有をキャンセルしました。動画はそのまま残っています。':'共有できませんでした。動画は残っています。「動画を保存」か下の案内をお試しください。';
+}finally{sharing=false;updateVideoActions()}
+});
+updateVideoActions();
 const recordingSupported=typeof MediaRecorder!=='undefined'&&typeof canvas.captureStream==='function';
 if(!recordingSupported){recordButton.disabled=true;recordStatus.textContent='このブラウザーでは動画録画に対応していません。画像保存をご利用ください。'}
 function resetRecordButton(){armed=false;recordButton.disabled=!recordingSupported;recordButton.textContent='10秒録画';delete recordButton.dataset.armed;delete recordButton.dataset.recording}
@@ -126,26 +157,34 @@ stream=composite.captureStream(0);
 const mime=['video/mp4;codecs=avc1.42E01E','video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'].find(type=>MediaRecorder.isTypeSupported(type));
 const recorder=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:5000000}:{videoBitsPerSecond:5000000});
 const session={recorder,stream,chunks:[],frame:0,timer:0,failed:false,started:performance.now(),interrupted:false};recording=session;
+updateVideoActions();
 recorder.ondataavailable=e=>{if(e.data.size)session.chunks.push(e.data)};
 recorder.onerror=()=>{session.failed=true;recordStatus.textContent='録画できませんでした。もう一度お試しください。';finishRecording()};
 recorder.onstop=()=>{
-clearTimeout(session.timer);cancelAnimationFrame(session.frame);session.stream.getTracks().forEach(track=>track.stop());recording=null;resetRecordButton();
+clearTimeout(session.timer);cancelAnimationFrame(session.frame);session.stream.getTracks().forEach(track=>track.stop());recording=null;resetRecordButton();updateVideoActions();
 if(session.failed)return;
 const type=recorder.mimeType||session.chunks[0]?.type||'video/webm',blob=new Blob(session.chunks,{type});
 if(!blob.size){recordStatus.textContent='動画を作成できませんでした。もう一度お試しください。';return}
-videoPreview.pause();videoPreview.removeAttribute('src');videoPreview.load();if(videoURL)URL.revokeObjectURL(videoURL);videoURL=URL.createObjectURL(blob);
+const nextURL=URL.createObjectURL(blob);
+videoPreview.pause();videoPreview.removeAttribute('src');videoPreview.load();if(videoURL)URL.revokeObjectURL(videoURL);videoURL=nextURL;recordedBlob=blob;
 videoPreview.src=videoURL;videoPreview.hidden=false;videoSave.href=videoURL;videoSave.download='ryumon-'+new Date().toISOString().replace(/[:.]/g,'-')+(type.includes('mp4')?'.mp4':'.webm');videoSave.hidden=false;
+recordedFile=null;
+try{recordedFile=new File([recordedBlob],videoSave.download,{type:recordedBlob.type.split(';')[0]||'video/webm'})}catch{/* Keep the existing preview and download even without File support. */}
+updateVideoActions();
 recordStatus.textContent=session.interrupted?'画面を離れたため録画を終了しました。ここまでの動画を保存できます。':'10秒の録画ができました。「動画を保存」を押してください。';
 };
 recorder.start();session.timer=setTimeout(finishRecording,RECORDING_MS);recordButton.disabled=true;recordButton.dataset.recording='true';recordStatus.textContent='録画中です。そのまま自由に描いてください。';
 const render=()=>{if(recording!==session)return;paint();stream.getVideoTracks()[0]?.requestFrame?.();recordButton.textContent='録画中 '+Math.max(1,Math.ceil((RECORDING_MS-performance.now()+session.started)/1000))+'秒';session.frame=requestAnimationFrame(render)};render();
-}catch(error){if(recording){clearTimeout(recording.timer);cancelAnimationFrame(recording.frame);recording.recorder.onstop=null;recording.recorder.onerror=null;if(recording.recorder.state!=='inactive')recording.recorder.stop()}stream?.getTracks().forEach(track=>track.stop());recording=null;resetRecordButton();recordStatus.textContent='この環境では録画を開始できませんでした。別のブラウザーでお試しください。'}
+}catch(error){if(recording){clearTimeout(recording.timer);cancelAnimationFrame(recording.frame);recording.recorder.onstop=null;recording.recorder.onerror=null;if(recording.recorder.state!=='inactive')recording.recorder.stop()}stream?.getTracks().forEach(track=>track.stop());recording=null;resetRecordButton();updateVideoActions();recordStatus.textContent='この環境では録画を開始できませんでした。別のブラウザーでお試しください。'}
 }
 recordButton.addEventListener('click',()=>{if(recording)return;armed=!armed;recordButton.dataset.armed=String(armed);recordButton.textContent=armed?'録画待ち・取消':'10秒録画';recordStatus.textContent=armed?'描き始めると録画が始まります。10秒間、自由になぞってください。':'ボタンを押してから描き始めると、10秒間録画します。'});
 canvas.addEventListener('pointerdown',e=>{if(e.button===0&&active===e.pointerId)startRecording()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){if(recording){recording.interrupted=true;finishRecording()}stop()}});demo(false);
 })();
 </script></body></html>
+
+
+
 
 
 
