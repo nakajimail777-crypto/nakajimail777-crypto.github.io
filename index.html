@@ -464,7 +464,7 @@
       <div class="hero-inner reveal">
         <p class="eyebrow">数字・カード・対話からひらく</p>
         <h1>答えは、すでに<br>あなたの中にある。</h1>
-        <p class="hero-copy">龍秘術®は、答えを決めるための占いではありません。数字とカードを手がかりに、対話を通して自分の気持ちに気づき、自分らしい次の一歩を見つけていくための時間です。</p>
+        <p class="hero-copy">龍秘術®は、あなたの中にある答えを、一緒に見つけていく時間です。うまく言葉にできない気持ちや、ひとりでは整理しきれない迷いを、数字とカードを手がかりにゆっくりひもといていきます。</p>
         <div class="actions"><div class="cta-swiper hero-swiper" aria-label="おすすめメニュー"><div class="cta-swiper-track"><a class="button button-primary cta-slide" href="#contact">セッションを相談する</a><a class="button button-primary cta-slide" href="#numbers">数字体験を試す</a><a class="button button-primary cta-slide" href="#reading">今の自分に合う文章</a></div></div><a class="button button-ghost" href="https://ryuhijutsu.com/" target="_blank" rel="noopener noreferrer">龍秘術®を知る（公式サイト）</a></div>
       </div>
     </section>
@@ -1053,6 +1053,13 @@
         menuButton.textContent = '☰';
       }
     });
+    document.addEventListener('pointerdown', event => {
+      if (!navLinks.classList.contains('open') ||
+          navLinks.contains(event.target) || menuButton.contains(event.target)) return;
+      navLinks.classList.remove('open');
+      menuButton.setAttribute('aria-expanded', 'false');
+      menuButton.textContent = '☰';
+    });
     document.querySelector('#year').textContent = new Date().getFullYear();
     const birthMonth = document.querySelector('#birthMonth');
     const birthDay = document.querySelector('#birthDay');
@@ -1159,4 +1166,3 @@
 
 </body>
 </html>
-
