@@ -429,7 +429,25 @@
 
     #ryumon { scroll-margin-top: 90px; }
     .ryumon-entry { display:grid; grid-template-columns:1fr 1fr; overflow:hidden; border-radius:24px; background:#08171a; color:#f4eddd; border:1px solid #b28a4355; }
-    .ryumon-preview { width:100%; height:100%; min-height:290px; object-fit:cover; background:#03080d; }
+    .ryumon-preview { display:block; width:100%; height:100%; min-height:290px; object-fit:cover; background:#03080d; animation:ryumon-soft-glow 6s ease-in-out infinite; }
+    @keyframes ryumon-soft-glow {
+      0%, 100% { filter:brightness(1); }
+      50% { filter:brightness(1.4); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ryumon-preview { animation:none; filter:none; }
+    }
+    .ryumon-visual { position:relative; display:block; width:100%; padding:0; border:0; border-radius:0; appearance:none; cursor:pointer; overflow:hidden; min-width:0; background:#03080d; }
+    .ryumon-visual:focus-visible { outline:3px solid #dfc991; outline-offset:-4px; }
+    .ryumon-visual::after { content:""; position:absolute; inset:-15%; pointer-events:none; background:radial-gradient(ellipse at 35% 45%, rgba(72,238,216,.6), transparent 48%), radial-gradient(ellipse at 72% 60%, rgba(255,211,118,.5), transparent 42%); mix-blend-mode:screen; animation:ryumon-light-breathe 6s ease-in-out infinite; }
+    @keyframes ryumon-light-breathe {
+      0%, 100% { opacity:.06; transform:scale(.8); }
+      50% { opacity:.5; transform:scale(1.12); }
+    }
+    @media (prefers-reduced-motion: reduce) { .ryumon-visual::after { animation:none; opacity:.15; } }
+    .ryumon-heading { grid-column:1 / -1; padding:28px 24px 24px; text-align:center; }
+    .ryumon-heading .kicker { color:#dfc991; }
+    .ryumon-heading h2 { color:#f4eddd; font-size:clamp(1.4rem,3vw,2rem); line-height:1.6; margin:10px 0 0; }
     .ryumon-copy { padding:clamp(24px,4vw,56px); align-self:center; }
     .ryumon-copy .kicker { color:#dfc991; }
     .ryumon-copy h2 { color:#f4eddd; font-size:clamp(1.4rem,3vw,2rem); line-height:1.6; margin:10px 0 18px; }
@@ -538,10 +556,9 @@
     <section class="section" id="ryumon">
       <div class="container">
         <div class="ryumon-entry">
-          <img class="ryumon-preview" src="ryumon-preview.svg" alt="青緑と金色の光が重なる龍紋のイメージ" loading="lazy" width="1000" height="650">
+          <div class="ryumon-heading"><p class="kicker">RYUMON · LIGHT EXPERIENCE</p><h2>あなただけの<br>龍紋を描く</h2></div>
+          <button class="ryumon-visual" id="ryumon-image-open" type="button" aria-label="龍紋を描いてみる" aria-haspopup="dialog" aria-controls="ryumon-dialog"><img class="ryumon-preview" src="ryumon-preview.svg" alt="青緑と金色の光が重なる龍紋のイメージ" loading="lazy" width="1000" height="650"></button>
           <div class="ryumon-copy">
-            <p class="kicker">RYUMON · LIGHT EXPERIENCE</p>
-            <h2>あなただけの<br>龍紋を描く</h2>
             <p>心の向くままに、光を紡いでみませんか。<br>指先から、ひとつだけの紋様が生まれます。</p>
             <button class="button button-primary" id="ryumon-open" type="button" aria-haspopup="dialog" aria-controls="ryumon-dialog">描いてみる</button>
           </div>
@@ -1151,16 +1168,17 @@
   <script>
   (() => {
     const dialog=document.getElementById('ryumon-dialog'), frame=document.getElementById('ryumon-frame'), trigger=document.getElementById('ryumon-open');
-    let previousOverflow='';
-    trigger.addEventListener('click',()=>{
+    let previousOverflow='', activeTrigger=trigger;
+    [trigger, document.getElementById('ryumon-image-open')].forEach(button => button.addEventListener('click',()=>{
+      activeTrigger=button;
       if(!frame.getAttribute('src')) frame.src=frame.dataset.src;
       previousOverflow=document.documentElement.style.overflow;
       document.documentElement.style.overflow='hidden';
       dialog.showModal();
-    });
+    }));
     document.getElementById('ryumon-close').addEventListener('click',()=>dialog.close());
     frame.addEventListener('load',()=>{frame.contentDocument.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();dialog.close();}});});
-    dialog.addEventListener('close',()=>{document.documentElement.style.overflow=previousOverflow;trigger.focus({preventScroll:true});});
+    dialog.addEventListener('close',()=>{document.documentElement.style.overflow=previousOverflow;activeTrigger.focus({preventScroll:true});});
   })();
   </script>
 
