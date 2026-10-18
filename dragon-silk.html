@@ -26,6 +26,7 @@
 .motion-controls{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.motion-controls button[aria-pressed=true]{color:#baffee;border-color:#6fc9b5;background:#163b39}
 .record-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px}.record-controls span{font-size:11px;color:#aebcbd}.record-controls a{color:#f1d9ab;font-size:12px;padding:10px;border:1px solid #647d80;border-radius:9px}.record-preview{display:block;max-width:100%;width:360px;margin:0 0 12px;border-radius:10px}.record-preview[hidden],.record-controls [hidden]{display:none}#record[data-armed=true]{border-color:#f1d9ab;color:#f1d9ab}#record[data-recording=true]{border-color:#ff9393;color:#ffcaca}
 .video-help{font-size:11px;line-height:1.8;color:#aebcbd;margin:0 0 12px}.video-help p{margin:8px 0}.video-help summary{cursor:pointer;color:#dfc991;padding:10px 12px;border:1px solid #304249;border-radius:9px;width:fit-content}.video-help details[open]{padding-bottom:8px}.video-help #video-share{margin-top:10px}.video-help ol{padding-left:22px;margin:8px 0}.video-help strong{color:#e8eee9}.video-help[hidden],.video-help [hidden]{display:none}
+.record-preview-wrap{position:relative;width:360px;max-width:100%;margin:0 0 12px;flex-shrink:0}.record-preview-wrap[hidden]{display:none}.record-preview-wrap .record-preview{width:100%;margin:0}.video-share-overlay{position:absolute;right:8px;top:8px;z-index:1;display:flex;align-items:center;gap:5px;min-height:44px;padding:7px 10px;background:rgba(7,14,18,.9);border-color:#647d80;color:#f1d9ab;font-size:11px;box-shadow:0 2px 10px #0005}
 </style>
 </head>
 <body><main class="app">
@@ -35,10 +36,10 @@
 <div class="motion-controls"><button id="flow" aria-pressed="false">うねり OFF</button><button id="stardust" aria-pressed="false">星の粉 OFF</button><button id="flame" aria-pressed="false">炎 OFF</button><button id="smoke" aria-pressed="false">煙 OFF</button><button id="afterglow" aria-pressed="false">余韻 OFF</button></div>
 <div class="toolbar"><div class="group" aria-label="光の色"><span class="label">光の色</span><button data-hue="193" aria-pressed="true"><span class="color" style="--dot:#67d7ff"></span>青龍</button><button data-hue="40" aria-pressed="false"><span class="color" style="--dot:#f0cb78"></span>黄金</button><button data-hue="155" aria-pressed="false"><span class="color" style="--dot:#79e7b8"></span>翡翠</button></div>
 <div class="group"><button id="letter-pen" type="button" aria-pressed="false">文字用ペン OFF</button><label class="label" for="symmetry">紋様</label><select id="symmetry" aria-label="紋様の対称性"><option value="2">左右対称</option><option value="5">五芒の紋</option><option value="6">六花の紋</option><option value="1">自由に描く</option></select></div>
-<div class="group"><button id="demo">描画見本</button><button id="undo" disabled>ひとつ戻す</button><button id="clear">新しく描く</button><button id="save" class="save">画像を保存 ↗</button></div></div>
+<div class="group"><button id="demo">描画見本</button><button id="undo" disabled>ひとつ戻す</button><button id="clear">新しく描く</button><button id="save" class="save">画像を保存 ↗</button><button id="image-share" type="button">画像を共有</button></div></div>
 <div class="record-controls"><button id="record">10秒録画</button><a id="video-save" hidden>動画を保存 ↗</a><span id="record-status" role="status" aria-live="polite">ボタンを押してから描き始めると、10秒間録画します。</span></div>
-<div id="video-help" class="video-help" hidden><p id="video-advice"></p><details><summary>保存できないときは</summary><button id="video-share" type="button" hidden>動画を共有</button><p><strong>今の動画を残したいとき</strong><br>「動画を共有」があれば、押して保存先を選んでください。表示されない場合は「動画を保存」をお試しください。</p><p>今の動画はChromeへ自動では移りません。保存できるまで、このページは閉じずに残してください。</p><p><strong>次の録画をChromeで作るには</strong></p><ol><li>LINEなど、今開いているアプリのメニューを開きます。</li><li>「ブラウザで開く」などの項目から、Chromeを選びます。項目名は端末によって異なります。</li><li>Chromeで龍紋を開き、録画・保存します。</li></ol></details></div>
-<video id="record-preview" class="record-preview" controls playsinline hidden aria-label="録画した龍紋"></video>
+<div id="video-help" class="video-help" hidden><p id="video-advice"></p><details><summary>保存できないときは</summary><p><strong>今の動画を残したいとき</strong><br>「動画を共有」があれば、押して保存先を選んでください。表示されない場合は「動画を保存」をお試しください。</p><p>今の動画はChromeへ自動では移りません。保存できるまで、このページは閉じずに残してください。</p><p><strong>次の録画をChromeで作るには</strong></p><ol><li>ThreadsやLINEなど、今開いているアプリのメニューを開きます。</li><li>「ブラウザで開く」などの項目から、Chromeを選びます。項目名は端末によって異なります。</li><li>Chromeで龍紋を開き、録画・保存します。</li></ol></details></div>
+<div id="record-preview-wrap" class="record-preview-wrap" hidden><video id="record-preview" class="record-preview" controls playsinline hidden aria-label="録画した龍紋"></video><button id="video-share" class="video-share-overlay" type="button" aria-label="動画を共有" title="動画を共有"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/></svg><span>共有</span></button></div>
 <div class="footer"><span id="status" role="status" aria-live="polite">最初の光は見本です。そのまま描き足せます。</span><span>ゆっくり、心の向くままに。</span></div>
 </main>
 <script>
@@ -151,22 +152,43 @@ document.getElementById('clear').addEventListener('click',()=>{stop();remember()
 function demo(save=true){stop();if(save)remember();background();const strokes=[t=>({x:800+250*Math.sin(t*Math.PI*.95)*Math.sin(t*4.8+.3),y:140+t*810}),t=>({x:820+330*t+36*Math.sin(t*8),y:500-355*t+70*Math.sin(t*5)}),t=>({x:800+390*Math.sin(t*Math.PI*.85),y:680+110*Math.sin(t*7)-230*t}),t=>({x:810+185*Math.sin(t*3.8),y:480+400*t})];for(const path of strokes){const p=path(0);makeThreads(p.x,p.y);for(let i=0;i<240;i++){const p=path(i/239);advance(p.x,p.y,.88)}for(let i=0;i<25;i++){const p=path(1);advance(p.x,p.y,.45)}}threads=[];hint.style.opacity=1;if(save)setStatus('描画見本です。色や対称性を変えて、もう一度試せます。')}
 document.getElementById('demo').addEventListener('click',()=>demo());
 document.getElementById('save').addEventListener('click',()=>{canvas.toBlob(blob=>{if(!blob){setStatus('保存できませんでした。もう一度お試しください。');return}const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='ryumon-'+new Date().toISOString().slice(0,10)+'.png';a.click();setTimeout(()=>URL.revokeObjectURL(url),30000);setStatus('紋様のPNG画像を保存しました。')},'image/png')});
+
+const imageShare=document.getElementById('image-share');
+let imageSharing=false;
+imageShare.addEventListener('click',async()=>{
+if(imageSharing)return;
+if(typeof navigator.share!=='function'||typeof navigator.canShare!=='function'||typeof File==='undefined'){setStatus('この環境では画像共有に対応していません。「画像を保存」か、Chromeなどでのご利用をお試しください。絵は残っています。');return}
+imageSharing=true;imageShare.disabled=true;
+try{
+// Build the file synchronously so share() runs within the user's click activation.
+const snapshot=document.createElement('canvas');snapshot.width=W;snapshot.height=H;const snapshotCtx=snapshot.getContext('2d');
+[canvas,smokeCanvas,flameCanvas,sparkCanvas].forEach(layer=>snapshotCtx.drawImage(layer,0,0));
+const encoded=snapshot.toDataURL('image/png').split(',')[1],binary=atob(encoded),bytes=new Uint8Array(binary.length);
+for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+const file=new File([bytes],'ryumon-'+new Date().toISOString().slice(0,10)+'.png',{type:'image/png'});
+if(!navigator.canShare({files:[file]})){setStatus('この環境では画像ファイルを共有できません。「画像を保存」をお試しください。絵は残っています。');return}
+await navigator.share({files:[file],title:'龍紋',text:'龍紋で描いた画像'});
+setStatus('共有画面を開きました。絵はこの画面にも残っています。');
+}catch(error){setStatus(error?.name==='AbortError'?'共有をキャンセルしました。絵はそのまま残っています。':'共有できませんでした。絵は残っています。「画像を保存」か、Chromeなどでのご利用をお試しください。')}
+finally{imageSharing=false;imageShare.disabled=false}
+});
+
 const recordButton=document.getElementById('record'),recordStatus=document.getElementById('record-status'),videoSave=document.getElementById('video-save'),videoPreview=document.getElementById('record-preview');
 const RECORDING_MS=10000;
 let armed=false,recording=null,videoURL=null;
 // Retain the completed recording independently of the current recording session.
 let recordedBlob=null,recordedFile=null,sharing=false;
 const videoShare=document.getElementById('video-share'),videoHelp=document.getElementById('video-help'),videoAdvice=document.getElementById('video-advice');
-const likelyLine=/\bLine\//i.test(navigator.userAgent||'');
+const likelyLine=/\bLine\/|Threads|Barcelona|Instagram/i.test(navigator.userAgent||'');
 function canShareVideo(){
 try{return !!recordedFile&&typeof navigator.share==='function'&&typeof navigator.canShare==='function'&&navigator.canShare({files:[recordedFile]})}catch{return false}
 }
 function updateVideoActions(){
 const shareable=canShareVideo();
-videoShare.hidden=!shareable;videoShare.disabled=sharing||!!recording;
+document.getElementById('record-preview-wrap').hidden=!recordedBlob;videoShare.hidden=false;videoShare.disabled=sharing||!!recording||!recordedBlob;
 videoHelp.hidden=!likelyLine&&!recordedBlob;
 videoAdvice.textContent=likelyLine
-?(shareable?'LINEでは直接保存できない場合があります。「動画を共有」をお試しください。':'LINEでは直接保存できない場合があります。録画前にChromeなどで開くと安心です。')
+?(shareable?'アプリ内では直接保存できない場合があります。「動画を共有」をお試しください。':'アプリ内では直接保存できない場合があります。録画前にChromeなどで開くと安心です。')
 :(shareable?'動画を共有できます。保存先は端末の共有画面で選べます。':'このブラウザでは動画共有に対応していません。「動画を保存」をお試しください。');
 if(likelyLine&&recordedBlob&&!shareable)videoAdvice.textContent='この環境では動画共有に対応していません。保存もできない場合は、下の案内をご確認ください。動画はこの画面に残っています。';
 }
