@@ -99,7 +99,7 @@ let hue=193,mode=2,active=null,target={x:800,y:550},threads=[],frame=0,tail=0,ph
 const setStatus=t=>status.textContent=t;
 function background(){ctx.globalCompositeOperation='source-over';ctx.fillStyle='#03080d';ctx.fillRect(0,0,W,H)}
 function remember(){history.push(ctx.getImageData(0,0,W,H));if(history.length>5)history.shift();undo.disabled=false}
-function stop(){if(frame)cancelAnimationFrame(frame);frame=0;active=null;threads=[];tail=0;drift=null;clearSparks();clearSmoke();clearFlames()}
+function stop(preserveEffects=false){if(frame)cancelAnimationFrame(frame);frame=0;active=null;threads=[];tail=0;drift=null;if(!preserveEffects){clearSparks();clearSmoke();clearFlames()}}
 function makeThreads(x,y){threads=Array.from({length:28},(_,i)=>({x,y,vx:0,vy:0,lastX:x,lastY:y,angle:i*2.39996,k:.012+i*.0018,drag:.72+i*.0038}));phase=0}
 function transforms(fn){if(mode===2){fn();ctx.save();ctx.translate(W,0);ctx.scale(-1,1);fn();ctx.restore()}else if(mode===5||mode===6){for(let i=0;i<mode;i++){ctx.save();ctx.translate(W/2,H/2);ctx.rotate(i*Math.PI*2/mode);ctx.translate(-W/2,-H/2);fn();ctx.restore()}}else fn()}
 function advance(x,y,power=1){phase+=flowing?.085:.055;ctx.globalCompositeOperation='lighter';threads.forEach((t,i)=>{const oldX=t.x,oldY=t.y;const d=Math.hypot(x-t.x,y-t.y);const sway=Math.min(24,d*.09);
@@ -136,7 +136,7 @@ else{ctx.beginPath();ctx.arc(p.x,p.y,width/2,0,Math.PI*2);ctx.fill()}
 ctx.restore();penLast={...p,time:now,width};emitSparks(p.x,p.y)
 }
 function point(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height}}
-canvas.addEventListener('pointerdown',e=>{if(active!==null||e.button!==0)return;e.preventDefault();stop();remember();active=e.pointerId;canvas.setPointerCapture(e.pointerId);target=point(e);if(letterPen){penLast=null;penLine(target);hint.style.opacity=0;setStatus('文字を描いています');return}makeThreads(target.x,target.y);hint.style.opacity=0;setStatus('光を紡いでいます');frame=requestAnimationFrame(loop)});
+canvas.addEventListener('pointerdown',e=>{if(active!==null||e.button!==0)return;e.preventDefault();stop(true);remember();active=e.pointerId;canvas.setPointerCapture(e.pointerId);target=point(e);if(letterPen){penLast=null;penLine(target);hint.style.opacity=0;setStatus('文字を描いています');return}makeThreads(target.x,target.y);hint.style.opacity=0;setStatus('光を紡いでいます');frame=requestAnimationFrame(loop)});
 canvas.addEventListener('pointermove',e=>{if(e.pointerId===active){target=point(e);if(letterPen)penLine(target)}});
 function release(e){if(e.pointerId!==active)return;if(letterPen){if(e.type==='pointerup')penLine(point(e));active=null;penLast=null;setStatus('文字を描き足したり、画像・動画で残せます。');return}active=null;
 if(lingering&&e.type==='pointerup'){
